@@ -1,0 +1,45 @@
+# .gitignore for MAUI coursework app project
+
+*/bin/ 
+*/obj/ 
+
+
+# User-specific files
+*.userprefs
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Packages
+*.nupkg
+*.snupkg
+
+# Generated files
+*.g.*
+*.generated.*
+
+# Secrets
+secrets.json
+
+# App Settings
+CourseWorkApp/appsettings.json 
+
+.fake
