@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="appsettings.json" />
-    <None Update="appsettings.json">
+    <EmbeddedResource Include="appsettings.json" Condition="Exists('appsettings.json')" />
+    <None Update="appsettings.json" Condition="Exists('appsettings.json')">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
 </ItemGroup>

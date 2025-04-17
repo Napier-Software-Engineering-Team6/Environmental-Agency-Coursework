@@ -23,18 +23,31 @@ namespace CourseworkApp.Database.Data
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
 
-      var a = typeof(GenericDbContext).Assembly;
-      var resources = a.GetManifestResourceNames();
+      var connectionString = Environment.GetEnvironmentVariable($"ConnectionStrings__{connectionName}");
 
-      using var stream = a.GetManifestResourceStream("CourseworkApp.Database.appsettings.json");
+      if (string.IsNullOrEmpty(connectionString))
+      {
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream("CourseworkApp.Database.appsettings.json");
 
-      var config = new ConfigurationBuilder()
-        .AddJsonStream(stream)
-        .Build();
+        if (stream != null)
+        {
+          var config = new ConfigurationBuilder()
+            .AddJsonStream(stream)
+            .Build();
+
+          connectionString = config.GetConnectionString(connectionName);
+        }
+      }
+
+      if (String.IsNullOrEmpty(connectionString))
+      {
+        throw new InvalidOperationException($"Database connection string '{connectionName}' is not configured.");
+      }
 
       optionsBuilder.UseSqlServer(
-        config.GetConnectionString(connectionName),
-        m => m.MigrationsAssembly("CourseworkApp.Migrations"));
+          connectionString,
+          m => m.MigrationsAssembly("CourseworkApp.Migrations"));
     }
   }
   public class CourseDbContext : GenericDbContext
