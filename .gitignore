@@ -40,7 +40,7 @@ desktop.ini
 secrets.json
 
 # App Settings
-CourseWorkApp/appsettings.json 
+CourseWorkApp.Database/appsettings.json 
 
 .fake
 
