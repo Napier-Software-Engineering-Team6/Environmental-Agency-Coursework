@@ -32,6 +32,48 @@ jobs:
    - name: Restore dependencies
      run: dotnet restore ${{ vars.CSPROJ_PATH }}
 
+   # Command-line tools from .net
+
+   - name: Install Tools
+     run: dotnet tool install --global dotnet-coverage
+
+   # Setup JAVA SDK
+   - name: Set up JDK 17
+     uses: actions/setup-java@v4
+     with:
+      java-version: 17
+      distribution: "zulu"
+
+   # Get SonarCloud dependencies from cache
+   - name: Cache SonarCloud packages
+     uses: actions/cache@v4
+     with:
+      path: ~/sonar/cache
+      key: ${{ runner.os }}-sonar
+      restore-keys: ${{ runner.os }}-sonar
+
+   # Get the SonarCloud scanner from cache
+   - name: Cache SonarCloud scanner
+     id: cache-sonar-scanner
+     uses: actions/cache@v4
+     with:
+      path: ./.sonar/scanner
+      key: ${{ runner.os }}-sonar-scanner
+      restore-keys: ${{ runner.os }}-sonar-scanner
+
+   # Install SonarCloud scanner
+   - name: Install SonarCloud scanner
+     if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+     run: |
+      mkdir -p .sonar/scanner
+      dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+      echo "$(Resolve-Path ./.sonar/scanner)" >> $env:GITHUB_PATH
+
+   - name: Start Sonar Analysis
+     env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+     run: |
+      ./.sonar/scanner/dotnet-sonarscanner begin /k:"Napier-Software-Engineering-Team6_Environmental-Agency-Coursework" /o:"napier-software-engineering-team6" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.scanner.scanAll=false /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
    - name: Build project
      env:
       ConnectionStrings__TestConnection: ${{ secrets.TestConnection_CONNECTION_STRING }}
@@ -40,4 +82,9 @@ jobs:
    - name: Test
      env:
       ConnectionStrings__TestConnection: ${{ secrets.TestConnection_CONNECTION_STRING }}
-     run: dotnet test ./CourseworkApp.sln --framework net8.0
+     run: dotnet-coverage collect "dotnet test ./CourseworkApp.sln --framework net8.0" -f xml -o "coverage.xml"
+
+   - name: End Sonar Analysis
+     env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+     run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN}}"
