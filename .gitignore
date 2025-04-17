@@ -43,3 +43,6 @@ secrets.json
 CourseWorkApp/appsettings.json 
 
 .fake
+
+.github/     
+# GitHub Actions
