@@ -41,8 +41,3 @@ secrets.json
 
 # App Settings
 CourseWorkApp.Database/appsettings.json 
-
-.fake
-
-.github/     
-# GitHub Actions
