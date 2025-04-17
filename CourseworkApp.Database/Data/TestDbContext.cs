@@ -23,7 +23,7 @@ namespace CourseworkApp.Database.Data
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
 
-      var connectionString = Environment.GetEnvironmentVariable($"ConnectionStrings:{connectionName}");
+      var connectionString = Environment.GetEnvironmentVariable($"ConnectionStrings__{connectionName}");
 
       if (string.IsNullOrEmpty(connectionString))
       {
