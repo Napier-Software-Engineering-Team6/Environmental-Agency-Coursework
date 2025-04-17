@@ -1,45 +1,43 @@
 name: Build & Test Workflow
 
-on: 
-  [pull_request]
+on: [pull_request]
 
 jobs:
-  build:
+ build:
+  runs-on: windows-latest
 
-    runs-on: windows-latest
+  steps:
+   - name: Checkout code
+     uses: actions/checkout@v4
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+   # Test database
+   - name: Download SqlServer
+     uses: potatoqualitee/mssqlsuite@v1.7
+     with:
+      install: sqlengine, sqlpackage
 
-      # Test database
-      - name: Download SqlServer
-        uses: potatoqualitee/mssqlsuite@v1.7
-        with:
-          install: sqlengine, sqlpackage
+   - name: Run sqlclient
+     run: |
+      sqlcmd -S localhost -U sa -P dbatools.I0 -Q "CREATE DATABASE TestDb;"
+      sqlcmd -S localhost -U sa -P dbatools.I0 -d TestDb -Q "SELECT @@version;"
 
-      - name: Run sqlclient
-        run: |
-          sqlcmd -S localhost -U sa -P dbatools.I0 -Q "CREATE DATABASE TestDb;"
-          sqlcmd -S localhost -U sa -P dbatools.I0 -d TestDb -Q "SELECT @@version;"
+   - name: Setup .NET
+     uses: actions/setup-dotnet@v4
+     with:
+      dotnet-version: 8.0
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0
+   - name: Restore workloads
+     run: dotnet workloads restore ${{ vars.CSPROJ_PATH }}
 
-      - name: Restore workloads
-        run: dotnet workloads restore ${{ vars.CSPROJ_PATH }}
+   - name: Restore dependencies
+     run: dotnet restore ${{ vars.CSPROJ_PATH }}
 
-      - name: Restore dependencies
-        run: dotnet restore ${{ vars.CSPROJ_PATH }}
+   - name: Build project
+     env:
+      ConnectionStrings__TestConnection: ${{ secrets.TestConnection_CONNECTION_STRING }}
+     run: dotnet build ${{ vars.CSPROJ_PATH }} --framework net8.0
 
-      - name: Build project
-        env:
-          ConnectionStrings__TestConnection: ${{ secrets.TestConnection_CONNECTION_STRING }}
-        run: dotnet build ${{ vars.CSPROJ_PATH }} --framework net8.0
-
-      - name: Test 
-        env:
-          ConnectionStrings__TestConnection: ${{ secrets.TestConnection_CONNECTION_STRING }}
-        run: dotnet test ./CourseworkApp.sln
+   - name: Test
+     env:
+      ConnectionStrings__TestConnection: ${{ secrets.TestConnection_CONNECTION_STRING }}
+     run: dotnet test ./CourseworkApp.sln --framework net8.0
