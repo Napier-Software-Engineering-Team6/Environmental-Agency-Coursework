@@ -27,7 +27,7 @@ jobs:
       dotnet-version: 8.0
 
    - name: Restore workloads
-     run: dotnet workloads restore ${{ vars.CSPROJ_PATH }}
+     run: dotnet workload restore ${{ vars.CSPROJ_PATH }}
 
    - name: Restore dependencies
      run: dotnet restore ${{ vars.CSPROJ_PATH }}
