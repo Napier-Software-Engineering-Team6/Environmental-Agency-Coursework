@@ -48,13 +48,13 @@ PROJECT_NAME           = "Environmental-Agency-Coursework"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         =
+PROJECT_NUMBER         = "V1.0"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewers a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          =
+PROJECT_BRIEF          = "A MAUI application for Enviromental Agency Management."
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
@@ -349,7 +349,9 @@ OPTIMIZE_OUTPUT_SLICE  = NO
 #
 # Note see also the list of default file extension mappings.
 
-EXTENSION_MAPPING      =
+EXTENSION_MAPPING      = cs=C#
+
+EXTENSION_MAPPING      += js=JavaScript
 
 # If the MARKDOWN_SUPPORT tag is enabled then Doxygen pre-processes all comments
 # according to the Markdown format, which allows for more readable
@@ -534,7 +536,7 @@ TIMESTAMP              = NO
 # normally produced when WARNINGS is set to YES.
 # The default value is: NO.
 
-EXTRACT_ALL            = YES
+EXTRACT_ALL            = NO
 
 # If the EXTRACT_PRIVATE tag is set to YES, all private members of a class will
 # be included in the documentation.
@@ -991,10 +993,9 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ./CourseworkApp \
+INPUT                  = ./CourseworkApp/Views \
+                         ./CourseworkApp/ViewModels
                          ./CourseworkApp.Database \
-                         ./CourseworkApp.Migrations \                        
-                         ./CourseworkApp.Test
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1034,58 +1035,10 @@ INPUT_FILE_ENCODING    =
 # be provided as Doxygen C comment), *.py, *.pyw, *.f90, *.f95, *.f03, *.f08,
 # *.f18, *.f, *.for, *.vhd, *.vhdl, *.ucf, *.qsf and *.ice.
 
-FILE_PATTERNS          = *.c \
-                         *.cc \
-                         *.cxx \
-                         *.cxxm \
-                         *.cpp \
-                         *.cppm \
-                         *.ccm \
-                         *.cs \
-                         *.c++ \
-                         *.c++m \
-                         *.java \
-                         *.ii \
-                         *.ixx \
-                         *.ipp \
-                         *.i++ \
-                         *.inl \
-                         *.idl \
-                         *.ddl \
-                         *.odl \
-                         *.h \
-                         *.hh \
-                         *.hxx \
-                         *.hpp \
-                         *.h++ \
-                         *.ixx \
-                         *.l \
-                         *.cs \
-                         *.d \
-                         *.php \
-                         *.php4 \
-                         *.php5 \
-                         *.phtml \
-                         *.inc \
-                         *.m \
-                         *.markdown \
-                         *.md \
-                         *.mm \
-                         *.dox \
-                         *.py \
-                         *.pyw \
-                         *.f90 \
-                         *.f95 \
-                         *.f03 \
-                         *.f08 \
-                         *.f18 \
-                         *.f \
-                         *.for \
-                         *.vhd \
-                         *.vhdl \
-                         *.ucf \
-                         *.qsf \
-                         *.ice
+FILE_PATTERNS          = *.cs \
+                         *.xaml.cs \
+                         
+FILE_PATTERNS          += *.js *.html
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -1100,7 +1053,13 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which Doxygen is
 # run.
 
-EXCLUDE                =
+EXCLUDE                = CourseworkApp/obj \
+                         CourseworkApp/bin \
+                         CourseworkApp/platforms \
+                         CourseworkApp.Database/obj \
+                         CourseworkApp.Database/bin \
+                         CourseworkApp.Migrations \
+                         CourseworkApp.Test 
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1116,7 +1075,7 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS = */*.g.cs */*.AssemblyInfo.cs */*ModelSnapshot.cs */*Migration*.cs
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -1242,7 +1201,7 @@ FORTRAN_COMMENT_AFTER  = 72
 # also VERBATIM_HEADERS is set to NO.
 # The default value is: NO.
 
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 
 # Setting the INLINE_SOURCES tag to YES will include the body of functions,
 # multi-line macros, enums or list initialized variables directly into the

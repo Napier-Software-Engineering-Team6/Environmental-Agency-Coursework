@@ -47,3 +47,5 @@ CourseWorkApp.Database/appsettings.json
 
 # HTML Code
 Docs/html/
+# PDF Code
+Docs/latex

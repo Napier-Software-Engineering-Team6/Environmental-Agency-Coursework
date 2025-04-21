@@ -5,6 +5,9 @@ using System.Diagnostics;
 
 namespace CourseworkApp.ViewModels;
 
+/// \file MainPageViewModel.cs
+/// \brief ViewModel for the MainPage of the application.
+
 /// <summary>
 /// ViewModel for the MainPage, responsible for handling data and business logic. 
 /// </summary>
