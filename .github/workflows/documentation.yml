@@ -23,6 +23,13 @@ jobs:
    - name: Generate documentation
      run: doxygen .
 
+   - name: List generated files
+     run: |
+      echo "Listing Docs directory:"
+      ls -Rla Docs || echo "Docs directory not found"
+      echo "--- Listing current directory ---"
+      ls -la
+
    - name: Upload static files as artifact
      uses: actions/upload-pages-artifact@v3
      with:
