@@ -72,6 +72,12 @@ jobs:
      with:
       path: Docs/html
 
+   - name: Upload html directory as debug artifact
+     uses: actions/upload-artifact@v4
+     with:
+      name: debug-html
+      path: html
+
  deploy:
   needs: generate
   runs-on: ubuntu-latest

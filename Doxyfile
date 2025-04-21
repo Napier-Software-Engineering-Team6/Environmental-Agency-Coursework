@@ -1033,8 +1033,7 @@ INPUT_FILE_ENCODING    =
 # be provided as Doxygen C comment), *.py, *.pyw, *.f90, *.f95, *.f03, *.f08,
 # *.f18, *.f, *.for, *.vhd, *.vhdl, *.ucf, *.qsf and *.ice.
 
-FILE_PATTERNS          = *.cs \
-                         *.xaml.cs \
+FILE_PATTERNS          = *.cs *.xaml.cs
                          
 FILE_PATTERNS          += *.js *.html
 
