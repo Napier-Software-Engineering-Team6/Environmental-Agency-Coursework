@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace CourseworkApp.ViewModels;
 
 /** 
-  * @Brief ViewModel for the MainPage of the MAUI application.
+  * @brief ViewModel for the MainPage of the MAUI application.
   * @remarks This ViewModel is responsible for managing the data and state of the MainPage.
   * @seealso CourseworkApp.Views.MainPage
   */
@@ -21,12 +21,21 @@ public partial class MainPageViewModel : ObservableObject
 
   [ObservableProperty]
   private string _description = "Initializing...";
+
+  /**
+    * @brief Initializes a new instance of the MainPageViewModel class.
+    * @param dbContext The database context instance provided via dependency injection.
+    */
   public MainPageViewModel(TestDbContext dbContext) //need to ensure correct db context
   {
     _dbContext = dbContext;
     Debug.WriteLine(">>> MainPageViewModel Constructor: Finished.");
   }
-
+  /**
+     * @brief Initializes the ViewModel asynchronously. Ensures data is loaded only once.
+     * @return A Task representing the asynchronous operation.
+     * @remarks This method should be called when the associated view appears. It calls LoadDataAsync.
+     */
   public async Task InitializeAsync()
   {
     if (_isInitialized)
