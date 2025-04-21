@@ -49,7 +49,7 @@ jobs:
      run: |
       if [ -d "html" ]; then
         mkdir -p Docs/html
-        cp -r html/* Docs/html/
+        cp -r html/. Docs/html/
         echo "Listing Docs/html after copy:"
         ls -Rla Docs/html
         if [ -f "Docs/html/index.html" ]; then
