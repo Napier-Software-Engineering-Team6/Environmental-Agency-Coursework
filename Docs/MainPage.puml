@@ -36,7 +36,7 @@ namespace CourseworkApp.Database.Data {
 }
 
 
-' --- Relationships within the application ---
+' --- Relationships within the application ----
 CourseworkApp.Views.MainPage --> CourseworkApp.ViewModels.MainPageViewModel : "uses (injects)"
 CourseworkApp.ViewModels.MainPageViewModel ..> CourseworkApp.Database.Data.TestDbContext : "uses (injects)"
 
