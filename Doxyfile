@@ -351,8 +351,6 @@ OPTIMIZE_OUTPUT_SLICE  = NO
 
 EXTENSION_MAPPING      = cs=C#
 
-EXTENSION_MAPPING      += js=JavaScript
-
 # If the MARKDOWN_SUPPORT tag is enabled then Doxygen pre-processes all comments
 # according to the Markdown format, which allows for more readable
 # documentation. See https://daringfireball.net/projects/markdown/ for details.
@@ -1033,9 +1031,9 @@ INPUT_FILE_ENCODING    =
 # be provided as Doxygen C comment), *.py, *.pyw, *.f90, *.f95, *.f03, *.f08,
 # *.f18, *.f, *.for, *.vhd, *.vhdl, *.ucf, *.qsf and *.ice.
 
-FILE_PATTERNS          = *.cs *.xaml.cs
+FILE_PATTERNS          = *.cs *.xaml *.xaml.cs
                          
-FILE_PATTERNS          += *.js *.html
+
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.

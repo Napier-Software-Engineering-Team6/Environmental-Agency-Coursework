@@ -24,7 +24,10 @@ jobs:
      run: cat Doxyfile || echo "Doxyfile not found"
 
    - name: Generate documentation
-     run: doxygen .
+     run: doxygen Doxyfile 2> doxygen_errors.log || (cat doxygen_errors.log && exit 1)
+
+   - name: Show Doxygen errors
+     run: cat doxygen_errors.log || echo "No Doxygen errors"
 
    - name: List source files
      run: |
@@ -77,6 +80,12 @@ jobs:
      with:
       name: debug-html
       path: html
+
+   - name: Upload Doxygen errors as artifact
+     uses: actions/upload-artifact@v4
+     with:
+      name: doxygen-errors
+      path: doxygen_errors.log
 
  deploy:
   needs: generate
