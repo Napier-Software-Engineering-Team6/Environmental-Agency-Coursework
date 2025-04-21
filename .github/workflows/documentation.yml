@@ -47,4 +47,4 @@ jobs:
 
    - name: Output Page URL
      run: |
-      echo "Github Pages URL: ${{ steps.deployment.outputs.page_url }}
+      echo "Github Pages URL: ${{ steps.deployment.outputs.page_url }}"
