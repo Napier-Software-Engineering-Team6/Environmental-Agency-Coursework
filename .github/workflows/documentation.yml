@@ -29,6 +29,13 @@ jobs:
    - name: Show Doxygen errors
      run: cat doxygen_errors.log || echo "No Doxygen errors"
 
+   - name: Prepare GitHub Pages artifact
+     run: |
+      mkdir github-pages-artifact
+      cp -r html/. github-pages-artifact/
+      ls -Rla github-pages-artifact/
+      echo "Listing github-pages-artifact directory:"
+
    - name: List source files
      run: |
       echo "Listing *.cs and *.xaml files in INPUT directories:"
@@ -44,30 +51,6 @@ jobs:
       ls -Rla Docs || echo "Docs directory not found"
       echo "--- Listing current directory ---"
       ls -la
-
-   #  - name: Ensure documentation is in the correct location
-   #    run: |
-   #     if [ -d "html" ]; then
-   #       mkdir -p Docs
-   #       # move the generated HTML files to the Docs directory
-   #       mv html/* Docs/ || true # Use || true to prevent failure if no non-hidden files
-   #       mv html/.[!.]* Docs/ || true # Move hidden files, excluding . and ..
-   #       mv html/..?* Docs/ || true # Move hidden files starting with two dots, excluding ..
-
-   #       echo "Listing Docs directory after move:"
-   #       ls -Rla Docs
-   #       if [ -f "Docs/index.html" ]; then
-   #         echo "index.html found in Docs"
-   #       else
-   #         echo "Error: index.html not found in Docs"
-   #         exit 1
-   #       fi
-   #       echo "Checking for class files in Docs:"
-   #       find Docs -name "class_*.html" || echo "No class files found in Docs"
-   #     else
-   #       echo "Error: html directory not found"
-   #       exit 1
-   #     fi
 
    - name: List artifact files before upload
      run: |
