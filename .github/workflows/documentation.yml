@@ -25,7 +25,7 @@ jobs:
 
    - name: List generated files
      run: |
-      echo: "Listing html directory:"
+      echo "Listing html directory:"
       ls -Rla html || echo "html directory not found"
       echo "Listing Docs directory:"
       ls -Rla Docs || echo "Docs directory not found"
