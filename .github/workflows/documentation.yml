@@ -46,6 +46,20 @@ jobs:
      run: |
       mkdir -p Docs/html
       cp -r html/* Docs/html/
+      echo "Listing Docs/html after copy:"
+            ls -Rla Docs/html
+            if [ -f "Docs/html/index.html" ]; then
+              echo "index.html found in Docs/html"
+            else
+              echo "Error: index.html not found in Docs/html"
+              exit 1
+            fi
+            echo "Checking for class files in Docs/html:"
+            find Docs/html -name "class_*.html" || echo "No class files found in Docs/html"
+          else
+            echo "Error: html directory not found"
+            exit 1
+          fi
 
    - name: List artifact files before upload
      run: |
