@@ -48,12 +48,15 @@ jobs:
    - name: Ensure documentation is in the correct location
      run: |
       if [ -d "html" ]; then
-        mkdir -p Docs/html
-        cp -r html/. Docs/html/
+        mkdir -p Docs
+        # move the generated HTML files to the Docs directory
+        mv html/* Docs/
+        mv html/.* Docs/
+
         echo "Listing Docs/html after copy:"
-        ls -Rla Docs/html
-        if [ -f "Docs/html/index.html" ]; then
-          echo "index.html found in Docs/html"
+        ls -Rla Docs
+        if [ -f "Docs/index.html" ]; then
+          echo "index.html found in Docs"
         else
           echo "Error: index.html not found in Docs/html"
           exit 1
