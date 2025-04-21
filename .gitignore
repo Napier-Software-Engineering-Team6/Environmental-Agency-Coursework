@@ -44,3 +44,6 @@ CourseWorkApp.Database/appsettings.json
 
 # Sonarquube
 .sonarqube
+
+# HTML Code
+Docs/html/
