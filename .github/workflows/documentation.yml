@@ -50,19 +50,20 @@ jobs:
       if [ -d "html" ]; then
         mkdir -p Docs
         # move the generated HTML files to the Docs directory
-        mv html/* Docs/
-        mv html/.* Docs/
+        mv html/* Docs/ || true # Use || true to prevent failure if no non-hidden files
+        mv html/.[!.]* Docs/ || true # Move hidden files, excluding . and ..
+        mv html/..?* Docs/ || true # Move hidden files starting with two dots, excluding ..
 
-        echo "Listing Docs/html after copy:"
+        echo "Listing Docs directory after move:"
         ls -Rla Docs
         if [ -f "Docs/index.html" ]; then
           echo "index.html found in Docs"
         else
-          echo "Error: index.html not found in Docs/html"
+          echo "Error: index.html not found in Docs"
           exit 1
         fi
-        echo "Checking for class files in Docs/html:"
-        find Docs/html -name "class_*.html" || echo "No class files found in Docs/html"
+        echo "Checking for class files in Docs:"
+        find Docs -name "class_*.html" || echo "No class files found in Docs"
       else
         echo "Error: html directory not found"
         exit 1
@@ -70,13 +71,13 @@ jobs:
 
    - name: List artifact files before upload
      run: |
-      echo "Listing Docs/html before artifact upload:"
-      ls -Rla Docs/html || echo "Docs/html directory not found"
+      echo "Listing Docs before artifact upload:"
+      ls -Rla Docs || echo "Docs directory not found"
 
    - name: Upload static files as artifact
      uses: actions/upload-pages-artifact@v3
      with:
-      path: Docs/html
+      path: Docs
 
    - name: Upload html directory as debug artifact
      uses: actions/upload-artifact@v4
