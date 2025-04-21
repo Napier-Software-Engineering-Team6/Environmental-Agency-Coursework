@@ -2611,7 +2611,7 @@ HIDE_UNDOC_RELATIONS   = YES
 # set to NO
 # The default value is: NO.
 
-HAVE_DOT               = NO
+HAVE_DOT               = YES
 
 # The DOT_NUM_THREADS specifies the number of dot invocations Doxygen is allowed
 # to run in parallel. When set to 0 Doxygen will base this on the number of
@@ -2946,7 +2946,7 @@ DOT_MULTI_TARGETS      = NO
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-GENERATE_LEGEND        = NO
+GENERATE_LEGEND        = YES
 
 # If the DOT_CLEANUP tag is set to YES, Doxygen will remove the intermediate
 # files that are used to generate the various graphs.
