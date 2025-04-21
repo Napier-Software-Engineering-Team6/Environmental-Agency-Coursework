@@ -5,14 +5,13 @@ using System.Diagnostics;
 
 namespace CourseworkApp.ViewModels;
 
-/** 
-  * @brief ViewModel for the MainPage of the MAUI application.
-  * @remarks This ViewModel is responsible for managing the data and state of the MainPage.
-  * @seealso CourseworkApp.Views.MainPage
-  */
+/// <summary>
+/// ViewModel for the MainPage, responsible for handling data and business logic. 
+/// </summary>
+/// <param name="TestDbContext">The database context used for data access.</param>
 public partial class MainPageViewModel : ObservableObject
 {
-  // private readonly TestDbContext _dbContext;
+
   private readonly TestDbContext _dbContext; // can update db context here to use different db context
   private bool _isInitialized = false;
 
@@ -22,10 +21,10 @@ public partial class MainPageViewModel : ObservableObject
   [ObservableProperty]
   private string _description = "Initializing...";
 
-  /**
-    * @brief Initializes a new instance of the MainPageViewModel class.
-    * @param dbContext The database context instance provided via dependency injection.
-    */
+  /// <summary>
+  /// Constructor for MainPageViewModel. Initializes the database context.
+  /// </summary>
+  /// <param name="dbContext"></param>
   public MainPageViewModel(TestDbContext dbContext) //need to ensure correct db context
   {
     _dbContext = dbContext;
