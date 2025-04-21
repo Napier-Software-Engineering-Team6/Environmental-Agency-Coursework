@@ -5,6 +5,11 @@ using System.Diagnostics;
 
 namespace CourseworkApp.ViewModels;
 
+/** 
+  * @Brief ViewModel for the MainPage of the MAUI application.
+  * @remarks This ViewModel is responsible for managing the data and state of the MainPage.
+  * @seealso CourseworkApp.Views.MainPage
+  */
 public partial class MainPageViewModel : ObservableObject
 {
   // private readonly TestDbContext _dbContext;
