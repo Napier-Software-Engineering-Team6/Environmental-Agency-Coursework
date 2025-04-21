@@ -30,6 +30,11 @@ jobs:
       echo "--- Listing current directory ---"
       ls -la
 
+   - name: Ensure documentation is in the correct location
+     run: |
+      mkdir -p Docs/html
+      cp -r html/* Docs/html/
+
    - name: Upload static files as artifact
      uses: actions/upload-pages-artifact@v3
      with:
