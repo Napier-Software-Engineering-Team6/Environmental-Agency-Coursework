@@ -26,6 +26,11 @@ jobs:
    - name: Generate documentation
      run: doxygen .
 
+   - name: List source files
+     run: |
+      echo "Listing *.cs and *.xaml files in INPUT directories:"
+      find CourseworkApp/Views CourseworkApp/ViewModels CourseworkApp.Database CourseworkApp CourseworkApp.Migrations CourseworkApp.Test -type f \( -name "*.cs" -o -name "*.xaml" \)
+
    - name: List generated files
      run: |
       echo "Listing html directory:"
