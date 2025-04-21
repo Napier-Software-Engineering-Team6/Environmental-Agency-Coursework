@@ -25,6 +25,8 @@ jobs:
 
    - name: List generated files
      run: |
+      echo: "Listing html directory:"
+      ls -Rla html || echo "html directory not found"
       echo "Listing Docs directory:"
       ls -Rla Docs || echo "Docs directory not found"
       echo "--- Listing current directory ---"
@@ -34,6 +36,11 @@ jobs:
      run: |
       mkdir -p Docs/html
       cp -r html/* Docs/html/
+
+   - name: List artifact files before upload
+     run: |
+      echo "Listing Docs/html before artifact upload:"
+      ls -Rla Docs/html || echo "Docs/html directory not found"
 
    - name: Upload static files as artifact
      uses: actions/upload-pages-artifact@v3
