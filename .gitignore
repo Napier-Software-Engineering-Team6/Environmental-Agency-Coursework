@@ -41,3 +41,6 @@ secrets.json
 
 # App Settings
 CourseWorkApp.Database/appsettings.json
+
+# Sonarquube
+.sonarqube

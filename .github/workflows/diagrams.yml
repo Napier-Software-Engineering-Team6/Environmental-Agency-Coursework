@@ -1,0 +1,29 @@
+name: Diagrams
+
+on:
+ push:
+  branches:
+   - "*"
+
+  paths:
+   - "Docs/**/*.puml"
+   - "Docs/**/*.plantuml"
+
+permissions:
+ contents: write
+
+jobs:
+ render_plantuml:
+  runs-on: ubuntu-latest
+  name: Render PlantUML Diagrams
+  steps:
+   - name: Checkout code
+     uses: actions/checkout@v4
+
+   - name: Render PlantUML Diagrams
+     uses: grassedge/generate-plantuml-action@v1.5
+     with:
+      path: Docs/Diagrams
+      message: "ci: Render PlantUML Diagrams [skip ci]"
+     env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
