@@ -48,7 +48,7 @@ jobs:
    - name: Upload static files as artifact
      uses: actions/upload-pages-artifact@v3
      with:
-      path: html
+      path: html/html
 
    - name: Upload html directory as debug artifact
      uses: actions/upload-artifact@v4
