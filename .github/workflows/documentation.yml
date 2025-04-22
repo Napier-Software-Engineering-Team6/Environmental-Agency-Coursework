@@ -29,13 +29,6 @@ jobs:
    - name: Show Doxygen errors
      run: cat doxygen_errors.log || echo "No Doxygen errors"
 
-   - name: Prepare GitHub Pages artifact
-     run: |
-      mkdir github-pages-artifact
-      cp -r html/. github-pages-artifact/
-      ls -Rla github-pages-artifact/
-      echo "Listing github-pages-artifact directory:"
-
    - name: List source files
      run: |
       echo "Listing *.cs and *.xaml files in INPUT directories:"
@@ -52,15 +45,10 @@ jobs:
       echo "--- Listing current directory ---"
       ls -la
 
-   - name: List artifact files before upload
-     run: |
-      echo "Listing Docs before artifact upload:"
-      ls -Rla Docs || echo "Docs directory not found"
-
    - name: Upload static files as artifact
      uses: actions/upload-pages-artifact@v3
      with:
-      path: Docs
+      path: html
 
    - name: Upload html directory as debug artifact
      uses: actions/upload-artifact@v4
