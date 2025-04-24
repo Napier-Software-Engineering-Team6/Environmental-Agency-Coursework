@@ -2,6 +2,8 @@
 using CourseworkApp.Database.Data;
 using CourseworkApp.ViewModels;
 using CourseworkApp.Views;
+using Syncfusion.Maui.Core.Hosting;
+
 
 namespace CourseworkApp;
 
@@ -21,10 +23,12 @@ public static class MauiProgram
 
 
 		builder.Services.AddDbContext<TestDbContext>();
-
-
 		builder.Services.AddSingleton<MainPage>();
 		builder.Services.AddSingleton<MainPageViewModel>();
+		
+		//--adding in to support graphs for environmental scientist page-->
+		builder.ConfigureSyncfusionCore();
+	
 
 #if DEBUG
 

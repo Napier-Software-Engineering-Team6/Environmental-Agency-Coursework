@@ -1,0 +1,58 @@
+@startuml
+' Define namespaces for clarity
+package CourseworkApp {
+    class App
+    class AppShell
+    class MauiProgram
+}
+
+package CourseworkApp.Views {
+    class MainPage
+    class Administrator
+    class OperationsManager
+    class DataScientist
+}
+
+package CourseworkApp.ViewModels {
+    class MainPageViewModel {
+        - TestDbContext _dbContext
+        - bool _isInitialized
+        - string _title
+        - string _description
+
+        + MainPageViewModel(TestDbContext dbContext)
+        + Task InitializeAsync()
+        - Task LoadDataAsync(int id)
+    }
+}
+
+package CourseworkApp.Database.Data {
+    class TestDbContext {
+        + DbSet<MainPage> MainPageDB
+    }
+    class CourseDbContext
+    class GenericDbContext
+}
+
+package CourseworkApp.Database.Models {
+    class MainPage {
+        + int Id
+        + string Text
+    }
+}
+
+' Define relationships
+MainPageViewModel --> TestDbContext : uses
+MainPage --> MainPageViewModel : binds
+MainPage --> MainPage : navigates
+App --> AppShell : uses
+AppShell --> MainPage : navigates
+AppShell --> Administrator : navigates
+AppShell --> OperationsManager : navigates
+AppShell --> DataScientist : navigates
+MauiProgram --> App : initializes
+TestDbContext --> MainPage : manages
+GenericDbContext <|-- TestDbContext
+GenericDbContext <|-- CourseDbContext
+
+@enduml
