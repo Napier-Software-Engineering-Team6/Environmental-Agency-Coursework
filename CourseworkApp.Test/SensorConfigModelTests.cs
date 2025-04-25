@@ -2,10 +2,10 @@ using Xunit;
 
 namespace CourseworkApp.Test;
 
-public class MainPageViewModelTests : IClassFixture<DatabaseFixture>
+public class SensorConfigModelTests : IClassFixture<DatabaseSensorFixture>
 {
-  DatabaseFixture _fixture;
-  public MainPageViewModelTests(DatabaseFixture fixture)
+  DatabaseSensorFixture _fixture;
+  public SensorConfigModelTests(DatabaseSensorFixture fixture)
   {
     _fixture = fixture;
     _fixture.SeedData();

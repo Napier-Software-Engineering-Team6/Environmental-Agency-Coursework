@@ -12,4 +12,5 @@ public class MainPage
   public int Id { get; set; }
   [Required]
   public required string Text { get; set; }
+
 }
