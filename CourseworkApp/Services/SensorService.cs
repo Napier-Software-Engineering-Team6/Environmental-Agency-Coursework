@@ -14,12 +14,12 @@ namespace CourseworkApp.Services
             _sensorRepository = sensorRepository;
         }
 
-        public Task<List<SensorModel>> GetAllSensorsAsync()
+        public virtual Task<List<SensorModel>> GetAllSensorsAsync()
         {
             return _sensorRepository.GetAllSensorsAsync();
         }
 
-        public Task<List<SensorModel>> GetSensorsByStatusAsync(string status)
+        public virtual Task<List<SensorModel>> GetSensorsByStatusAsync(string status)
         {
             return _sensorRepository.GetSensorsByStatusAsync(status);
         }
