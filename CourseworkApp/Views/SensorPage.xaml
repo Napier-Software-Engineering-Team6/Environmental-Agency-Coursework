@@ -14,11 +14,23 @@
             <CollectionView ItemsSource="{Binding Sensors}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BorderColor="LightGray" CornerRadius="10" Margin="5">
+                        <Frame BorderColor="LightGray" BackgroundColor="#1C1C1C" CornerRadius="10" Margin="5">
                             <StackLayout Padding="10">
                                 <Label Text="{Binding Name}" FontSize="18" FontAttributes="Bold" />
                                 <Label Text="{Binding Location}" FontSize="14" TextColor="Gray" />
-                                <Label Text="{Binding Status}" FontSize="14" TextColor="DarkGreen" />
+                                <Label Text="{Binding Status}" FontSize="14">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Active">
+                                            <Setter Property="TextColor" Value="Green" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Inactive">
+                                            <Setter Property="TextColor" Value="Orange" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Malfunction">
+                                            <Setter Property="TextColor" Value="Red" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
                                 <Label Text="{Binding LastUpdated, StringFormat='Last updated: {0:g}'}" FontSize="12" TextColor="DarkGray" />
                             </StackLayout>
                         </Frame>
