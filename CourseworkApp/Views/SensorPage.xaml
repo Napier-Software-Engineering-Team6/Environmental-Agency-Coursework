@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="CourseworkApp.Views.SensorPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:CourseworkApp.ViewModels"
+    Title="Sensor Status">
+
+    <ContentPage.Content>
+        <RefreshView
+            Command="{Binding RefreshSensorsCommand}"
+            IsRefreshing="{Binding IsBusy}">
+            
+            <CollectionView ItemsSource="{Binding Sensors}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="LightGray" CornerRadius="10" Margin="5">
+                            <StackLayout Padding="10">
+                                <Label Text="{Binding Name}" FontSize="18" FontAttributes="Bold" />
+                                <Label Text="{Binding Location}" FontSize="14" TextColor="Gray" />
+                                <Label Text="{Binding Status}" FontSize="14" TextColor="DarkGreen" />
+                                <Label Text="{Binding LastUpdated, StringFormat='Last updated: {0:g}'}" FontSize="12" TextColor="DarkGray" />
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </RefreshView>
+    </ContentPage.Content>
+</ContentPage>
