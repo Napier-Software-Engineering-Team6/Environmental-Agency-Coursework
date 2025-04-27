@@ -1,4 +1,4 @@
-using CourseworkApp.Models;
+using CourseworkApp.Database.Models;
 using CourseworkApp.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;

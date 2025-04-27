@@ -1,4 +1,4 @@
-using CourseworkApp.Models;
+using CourseworkApp.Database.Models;
 using CourseworkApp.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

@@ -1,4 +1,4 @@
-namespace CourseworkApp.Models
+namespace CourseworkApp.Database.Models
 {
     public class SensorModel
     {

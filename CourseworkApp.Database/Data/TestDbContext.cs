@@ -20,6 +20,9 @@ namespace CourseworkApp.Database.Data
     }
     public DbSet<MainPage> MainPageDB { get; set; }
 
+    public DbSet<SensorModel> Sensors { get; set; }
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
 
