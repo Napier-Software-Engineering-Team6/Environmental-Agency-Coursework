@@ -6,22 +6,22 @@ namespace CourseworkApp.Repositories
 {
     public class SensorRepository : ISensorRepository
     {
-        private readonly TestDbContext _context;
+        private readonly TestDbContext _dbContext;
 
-        public SensorRepository()
+        public SensorRepository(TestDbContext dbContext)
         {
-            _context = new TestDbContext();
+            _dbContext = dbContext;
         }
 
         public async Task<List<SensorModel>> GetAllSensorsAsync()
         {
-            return await _context.Sensors.ToListAsync();
+            return await _dbContext.Sensors.ToListAsync();
         }
 
         public async Task<List<SensorModel>> GetSensorsByStatusAsync(string status)
         {
-            return await _context.Sensors
-                .Where(s => s.Status == status)
+            return await _dbContext.Sensors
+                .Where(sensor => sensor.Status == status)
                 .ToListAsync();
         }
     }

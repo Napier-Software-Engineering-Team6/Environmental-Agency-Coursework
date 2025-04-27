@@ -1,6 +1,4 @@
 using CourseworkApp.ViewModels;
-using CourseworkApp.Services;
-using CourseworkApp.Repositories;
 
 namespace CourseworkApp.Views
 {
@@ -8,17 +6,17 @@ namespace CourseworkApp.Views
     {
         private readonly SensorViewModel _viewModel;
 
-        public SensorPage()
+        public SensorPage(SensorViewModel viewModel)
         {
             InitializeComponent();
-
-            var sensorRepository = new SensorRepository(); // assume you already have ISensorRepository
-            var sensorService = new SensorService(sensorRepository);
-            _viewModel = new SensorViewModel(sensorService);
-
+            _viewModel = viewModel;
             BindingContext = _viewModel;
+        }
 
-            _viewModel.LoadSensorsCommand.Execute(null);
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await _viewModel.LoadSensorsAsync();
         }
     }
 }

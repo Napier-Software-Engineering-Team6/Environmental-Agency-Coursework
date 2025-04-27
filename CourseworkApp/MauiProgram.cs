@@ -1,40 +1,49 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using CourseworkApp.Database.Data;
+using CourseworkApp.Repositories;
+using CourseworkApp.Services;
 using CourseworkApp.ViewModels;
 using CourseworkApp.Views;
-using Syncfusion.Maui.Core.Hosting;
 
 
-namespace CourseworkApp;
 
-public static class MauiProgram
+namespace CourseworkApp
 {
-	public static MauiApp CreateMauiApp()
-	{
-		var builder = MauiApp.CreateBuilder();
+    public static class MauiProgram
+    {
+        public static MauiApp CreateMauiApp()
+        {
+            var builder = MauiApp.CreateBuilder();
+            builder
+                .UseMauiApp<App>();
 
-		builder
-				.UseMauiApp<App>()
-				.ConfigureFonts(fonts =>
-				{
-					fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-					fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-				});
+            // Load appsettings.json
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            builder.Configuration.AddConfiguration(config);
+
+            // Get the connection string safely
+            var connectionString = builder.Configuration.GetSection("ConnectionStrings:DevelopmentConnection").Value;
+
+            // Register DbContext with the correct connection string
+            builder.Services.AddDbContext<TestDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
+            // Dependency Injection for Repositories, Services, ViewModels
+            builder.Services.AddTransient<ISensorRepository, SensorRepository>();
+            builder.Services.AddTransient<SensorService>();
+            builder.Services.AddTransient<SensorViewModel>();
+			builder.Services.AddTransient<SensorPage>();
+			builder.Services.AddTransient<MainPageViewModel>();
+			builder.Services.AddTransient<MainPage>();
 
 
-		builder.Services.AddDbContext<TestDbContext>();
-		builder.Services.AddSingleton<MainPage>();
-		builder.Services.AddSingleton<MainPageViewModel>();
-		
-		//--adding in to support graphs for environmental scientist page-->
-		builder.ConfigureSyncfusionCore();
-	
 
-#if DEBUG
-
-		builder.Logging.AddDebug();
-#endif
-
-		return builder.Build();
-	}
+            return builder.Build();
+        }
+    }
 }
