@@ -48,9 +48,7 @@ namespace CourseworkApp.Database.Data
         throw new InvalidOperationException($"Database connection string '{connectionName}' is not configured.");
       }
 
-      optionsBuilder.UseSqlServer(
-          connectionString,
-          m => m.MigrationsAssembly("CourseworkApp.Migrations"));
+      optionsBuilder.UseSqlServer(connectionString);
     }
   }
   public class CourseDbContext : GenericDbContext

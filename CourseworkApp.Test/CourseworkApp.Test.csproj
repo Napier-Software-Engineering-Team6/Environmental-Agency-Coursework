@@ -25,6 +25,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../CourseworkApp/CourseworkApp.csproj" />
-    <ProjectReference Include="../CourseworkApp.Migrations/CourseworkApp.Migrations.csproj" />
   </ItemGroup>
 </Project>
