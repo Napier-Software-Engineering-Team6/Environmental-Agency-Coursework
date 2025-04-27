@@ -18,6 +18,9 @@ namespace CourseworkApp.ViewModels
 
         public ICommand LoadSensorsCommand { get; }
 
+        public ICommand RefreshSensorsCommand { get; }
+
+
         //private backing field for IsBusy property
         private bool isBusy;
         //The public property. Exposes the value to the outside (e.g., the UI) 
@@ -37,7 +40,10 @@ namespace CourseworkApp.ViewModels
         public SensorViewModel(SensorService sensorService)
         {
             _sensorService = sensorService;
+            //Both LoadSensorsCommand and RefreshSensorsCommand point to the same method (LoadSensorsAsync()), so no duplicated loading logic.DRY (Don't Repeat Yourself).
             LoadSensorsCommand = new Command(async () => await LoadSensorsAsync());
+            RefreshSensorsCommand = new Command(async () => await LoadSensorsAsync());
+
         }
 
         public async Task LoadSensorsAsync()
