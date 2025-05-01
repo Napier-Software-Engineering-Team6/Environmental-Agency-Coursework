@@ -4,15 +4,32 @@
               xmlns:viewmodels="clr-namespace:CourseworkApp.ViewModels"
               xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
               x:Class="CourseworkApp.Views.EnvironmentalScientist"
-              BackgroundColor="#FF4B7541">
+              BackgroundColor="#FF212520">
 
-    <ContentPage.BindingContext>
-        <viewmodels:EnvironmentalScientistViewModel />
-    </ContentPage.BindingContext>
 
     <VerticalStackLayout Padding="20" Spacing="20">
         <Label Text="EnvironmentalScientist" FontSize="24" HorizontalOptions="Center" />
-        <Image Source="weather.png" HeightRequest="80" WidthRequest="80" HorizontalOptions="Center" />  
+        <Image Source="weather.png" HeightRequest="80" WidthRequest="80" HorizontalOptions="Center" /> 
+    <!-- Date range selection -->
+    <HorizontalStackLayout Spacing="10" Padding="0,10">
+        <Label Text="From:" VerticalOptions="Center" />
+        <DatePicker Date="{Binding StartDate}"
+                    MinimumDate="{Binding MinDate}"
+                    MaximumDate="{Binding EndDate}" />
+        <Label Text="To:" VerticalOptions="Center" />
+        <DatePicker Date="{Binding EndDate}"
+                    MinimumDate="{Binding StartDate}"
+                    MaximumDate="{Binding MaxDate}" />
+    </HorizontalStackLayout>
+
+
+
+
+
+
+
+
+
         <Label Text="Use the drop down menu to select the type of sensors you wish to analyse" FontSize="18" HorizontalOptions="Start" />
         <Picker Title="Sensor Category"
                 ItemsSource="{Binding Categories}"

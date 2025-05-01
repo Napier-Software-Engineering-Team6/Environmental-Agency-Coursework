@@ -1,0 +1,23 @@
+@startuml
+package CourseworkApp.ViewModels {
+    class EnvironmentalScientistViewModel {
+        - DateTime StartDate
+        - DateTime EndDate
+        - ObservableCollection<string> Categories
+        - string SelectedCategory
+        - ObservableCollection<DataPoint> DisplayedData
+
+        + void LoadData()
+        + void UpdateDateRange(DateTime start, DateTime end)
+    }
+
+    class MainPageViewModel {
+        - string Title
+        - string Description
+
+        + Task InitializeAsync()
+    }
+
+    EnvironmentalScientistViewModel --> MainPageViewModel : uses
+}
+@enduml

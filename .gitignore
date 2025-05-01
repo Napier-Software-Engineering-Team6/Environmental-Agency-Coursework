@@ -49,3 +49,11 @@ CourseWorkApp.Database/appsettings.json
 Docs/html/
 # PDF Code
 Docs/latex
+
+
+Notes/bin/
+Notes/obj/
+Notes.Database/obj/
+Notes.Database/bin/
+Notes.Database/appsettings.json
+.vscode
