@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:viewmodels="clr-namespace:CourseworkApp.ViewModels"
+              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+              x:Class="CourseworkApp.Views.EnvironmentalScientist"
+              BackgroundColor="#FF4B7541">
+
+    <ContentPage.BindingContext>
+        <viewmodels:EnvironmentalScientistViewModel />
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout Padding="20" Spacing="20">
+        <Label Text="EnvironmentalScientist" FontSize="24" HorizontalOptions="Center" />
+        <Image Source="weather.png" HeightRequest="80" WidthRequest="80" HorizontalOptions="Center" />  
+        <Label Text="Use the drop down menu to select the type of sensors you wish to analyse" FontSize="18" HorizontalOptions="Start" />
+        <Picker Title="Sensor Category"
+                ItemsSource="{Binding Categories}"
+                SelectedItem="{Binding SelectedCategory}" />
+
+        <CollectionView ItemsSource="{Binding DisplayedData}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Orientation="Horizontal" Padding="5">
+                        <Label Text="{Binding Date}" WidthRequest="100"/>
+                        <Label Text="{Binding Value}" WidthRequest="60"/>
+                        <Label Text="{Binding Detail}" WidthRequest="80"/>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <Image Source="sensor.png" HeightRequest="60" WidthRequest="60" HorizontalOptions="Start" />
+                <chart:SfCartesianChart HeightRequest="200">
+        <chart:SfCartesianChart.XAxes>
+            <chart:CategoryAxis />
+        </chart:SfCartesianChart.XAxes>
+        <chart:SfCartesianChart.YAxes>
+            <chart:NumericalAxis />
+        </chart:SfCartesianChart.YAxes>
+        <chart:SfCartesianChart.Series>
+            <chart:LineSeries 
+                ItemsSource="{Binding ChartData}"
+                XBindingPath="Label"
+                YBindingPath="Value"
+                ShowDataLabels="True" />
+        </chart:SfCartesianChart.Series>
+    </chart:SfCartesianChart>
+    </VerticalStackLayout>
+</ContentPage>

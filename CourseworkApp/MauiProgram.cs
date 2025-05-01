@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using CourseworkApp.Database.Data;
 using CourseworkApp.ViewModels;
 using CourseworkApp.Views;
 using CourseworkApp.Services;
 using CourseworkApp.Services.Factory;
+using Syncfusion.Maui.Core.Hosting;
 
 namespace CourseworkApp;
 
@@ -31,12 +32,13 @@ public static class MauiProgram
 		builder.Services.AddSingleton<AdminConfigViewModel>();
 		builder.Services.AddSingleton<ConfigForm>();
 		builder.Services.AddSingleton<ConfigFormViewModel>();
-		builder.Services.AddSingleton<ConfigFormViewModel>();
 		builder.Services.AddSingleton<ISensorConfigurationFactory, SensorConfigurationFactory>();
 		builder.Services.AddSingleton<INavigationService, NavigationService>();
 		builder.Services.AddSingleton<IValidationService, ValidationService>();
 		builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
 		builder.Services.AddSingleton<ILoggingService, LoggingService>();
+		//--adding in to support graphs for environmental scientist page-->
+		builder.ConfigureSyncfusionCore();
 
 #if DEBUG
 
