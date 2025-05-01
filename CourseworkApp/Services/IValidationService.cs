@@ -5,5 +5,5 @@ namespace CourseworkApp.Services;
 
 public interface IValidationService
 {
-  bool ValidateConfig(SensorConfigurations config);
+  List<string> ValidateConfig(SensorConfigurations config);
 }

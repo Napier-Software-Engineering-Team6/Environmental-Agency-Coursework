@@ -59,17 +59,12 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 
 		if (value != null)
 		{
-
-
-
 			ConfigId = value.ConfigId;
 			MonitorFrequencySeconds = value.ConfigData?.MonitorFrequencySeconds ?? 0;
 			MonitorDurationSeconds = value.ConfigData?.MonitorDurationSeconds ?? 0;
 			LocationLatitude = value.ConfigData?.LocationLatitude ?? 0.0;
 			LocationLongitude = value.ConfigData?.LocationLongitude ?? 0.0;
 			IsActive = value.IsActive;
-			// -----------------------------------------------------
-
 			ErrorMessage = string.Empty;
 			IsBusy = false;
 		}
@@ -88,10 +83,10 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 	protected override async Task<bool> SaveAsync()
 	{
 
-		if (ConfigToEdit == null)
+		if (ConfigToEdit == null || ConfigToEdit.ConfigData == null)
 		{
-			ErrorMessage = "Configuration data is not available.";
-			if (_loggingService != null) await _loggingService.LogErrorAsync("SaveAsync called with null ConfigToEdit.");
+			ErrorMessage = "Configuration data is not available or incomplete.";
+			if (_loggingService != null) await _loggingService.LogErrorAsync("SaveAsync called with null ConfigToEdit or ConfigData.");
 			return false;
 		}
 
@@ -127,32 +122,44 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 	}
 
 	protected override Task<bool> ValidateAsync()
+
 	{
-		bool isValid = true;
-		string validationErrors = string.Empty;
-
-		if (MonitorFrequencySeconds < 0)
+		if (_validationService == null)
 		{
-			isValid = false;
-			validationErrors += "Monitor Frequency cannot be negative.\n";
+			ErrorMessage = "Validation service is not available.";
+			return Task.FromResult(false);
+		}
 
-		}
-		if (MonitorDurationSeconds < 0)
+		if (ConfigToEdit == null)
 		{
-			isValid = false;
-			validationErrors += "Monitor Duration cannot be negative.\n";
+			ErrorMessage = "Configuration data is not available.";
+			return Task.FromResult(false);
 		}
+
+		if (ConfigToEdit.ConfigData == null)
+		{
+			ErrorMessage = "Configuration details (ConfigData) is incomplete.";
+			return Task.FromResult(false);
+		}
+
+		ConfigToEdit.ConfigData.MonitorFrequencySeconds = MonitorFrequencySeconds;
+		ConfigToEdit.ConfigData.MonitorDurationSeconds = MonitorDurationSeconds;
+		ConfigToEdit.ConfigData.LocationLatitude = LocationLatitude;
+		ConfigToEdit.ConfigData.LocationLongitude = LocationLongitude;
+
+		List<string> validationErrors = _validationService.ValidateConfig(ConfigToEdit);
+
+		bool isValid = !validationErrors.Any(); // Or validationErrors.Count == 0;
 
 		if (!isValid)
 		{
-			ErrorMessage = validationErrors.TrimEnd('\n');
-			if (_loggingService != null) _ = _loggingService.LogWarningAsync($"Validation failed: {ErrorMessage}");
+			ErrorMessage = string.Join(Environment.NewLine, validationErrors);
+			if (_loggingService != null) _ = _loggingService.LogWarningAsync($"Validation failed for Config ID {ConfigToEdit.ConfigId}: {ErrorMessage.Replace(Environment.NewLine, "; ")}");
 		}
 		else
 		{
-			ErrorMessage = string.Empty;
+			ErrorMessage = string.Empty; // Clear error message if validation passes
 		}
-
 		return Task.FromResult(isValid);
 	}
 

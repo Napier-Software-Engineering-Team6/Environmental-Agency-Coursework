@@ -50,7 +50,6 @@ public abstract partial class BaseFormViewModel : ObservableObject
 		{
 			if (!await ValidateAsync())
 			{
-				ErrorMessage = "Validation failed. Please check your inputs.";
 				await LogActionAsync(SubmitAction, "Failed", ErrorMessage);
 				return;
 			}

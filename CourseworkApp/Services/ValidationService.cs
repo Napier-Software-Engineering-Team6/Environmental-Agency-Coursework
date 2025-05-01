@@ -1,69 +1,75 @@
 using System;
 using CourseworkApp.Database.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CourseworkApp.Services;
 
 public class ValidationService : IValidationService
 {
-  public bool ValidateConfig(SensorConfigurations config)
+
+  public List<string> ValidateConfig(SensorConfigurations config)
   {
+
+    var errors = new List<string>();
     //Basic null check
     if (config == null)
     {
-      System.Diagnostics.Debug.WriteLine("Validation failed: Config object is null.");
-      return false;
+      errors.Add("Validation failed: Config object is null.");
+      return errors;
     }
 
     // Validate properties of SensorConfigurations
     if (string.IsNullOrWhiteSpace(config.SensorType))
     {
-      System.Diagnostics.Debug.WriteLine("Validation Failed: SensorType is empty.");
-      return false;
+      errors.Add("Validation Failed: SensorType is empty.");
     }
 
     if (string.IsNullOrWhiteSpace(config.ConfigName))
     {
-      System.Diagnostics.Debug.WriteLine("Validation Failed: ConfigName is empty.");
-      return false;
+      errors.Add("Validation Failed: ConfigName is empty.");
     }
 
     // Validate the nested ConfigData object
     if (config.ConfigData == null)
     {
-      System.Diagnostics.Debug.WriteLine("Validation Failed: ConfigData is null.");
-      return false;
+      errors.Add("Validation Failed: ConfigData is null.");
     }
 
     // Validate properties of BaseSensorConfig
     // Assuming MonitorFrequencySeconds and MonitorDurationSeconds should be positive
     if (config.ConfigData.MonitorFrequencySeconds <= 0)
     {
-      System.Diagnostics.Debug.WriteLine("Validation Failed: MonitorFrequencySeconds must be positive.");
-      return false;
+      errors.Add("Validation Failed: MonitorFrequencySeconds must be positive.");
     }
 
     if (config.ConfigData.MonitorDurationSeconds <= 0)
     {
-      System.Diagnostics.Debug.WriteLine("Validation Failed: MonitorDurationSeconds must be positive.");
-      return false;
+      errors.Add("Validation Failed: MonitorDurationSeconds must be positive.");
     }
 
     // Validate Latitude (between -90 and 90)
     if (config.ConfigData.LocationLatitude < -90.0 || config.ConfigData.LocationLatitude > 90.0)
     {
-      System.Diagnostics.Debug.WriteLine("Validation Failed: LocationLatitude is out of range.");
-      return false;
+      errors.Add("Validation Failed: LocationLatitude is out of range.");
     }
 
     // Validate Longitude (between -180 and 180)
     if (config.ConfigData.LocationLongitude < -180.0 || config.ConfigData.LocationLongitude > 180.0)
     {
-      System.Diagnostics.Debug.WriteLine("Validation Failed: LocationLongitude is out of range.");
-      return false;
+      errors.Add("Validation Failed: LocationLongitude is out of range.");
     }
 
     // If all checks pass
-    System.Diagnostics.Debug.WriteLine("Validation Succeeded.");
-    return true;
+    if (errors.Count == 0)
+    {
+      System.Diagnostics.Debug.WriteLine("Validation Succeeded.");
+    }
+    else
+    {
+      System.Diagnostics.Debug.WriteLine($"Validation Failed with {errors.Count} errors.");
+    }
+
+    return errors;
   }
 }
