@@ -1,0 +1,84 @@
+@startuml Sensor Feature Structure
+
+skinparam backgroundColor #0d0d0d
+skinparam classBackgroundColor #1e1e1e
+skinparam classBorderColor White
+skinparam classArrowColor White
+skinparam classFontColor White
+skinparam ArrowColor White
+skinparam ArrowFontColor White
+skinparam titleFontColor White
+skinparam defaultTextAlignment center
+skinparam shadowing false
+
+' Title
+ title Sensor Feature - Class Relationships
+
+package CourseworkApp.Database.Models {
+  class SensorModel {
+    +int Id
+    +string Name
+    +string Location
+    +string Status
+    +DateTime LastUpdated
+    +string Type
+    +int ThresholdLow
+    +int ThresholdHigh
+  }
+}
+
+package CourseworkApp.Database.Data {
+  class CourseDbContext {
+    +DbSet<SensorModel> Sensors
+  }
+}
+
+package CourseworkApp.Repositories {
+  interface ISensorRepository {
+    +Task<List<SensorModel>> GetAllSensorsAsync(bool forceReload = false)
+    +Task<List<SensorModel>> GetSensorsByStatusAsync(string status)
+  }
+
+  class SensorRepository {
+    -CourseDbContext _dbContext
+    +GetAllSensorsAsync(bool): Task<List<SensorModel>>
+    +GetSensorsByStatusAsync(string): Task<List<SensorModel>>
+  }
+
+  ISensorRepository <|.. SensorRepository
+  SensorRepository --> CourseDbContext
+}
+
+package CourseworkApp.Services {
+  class SensorService {
+    -ISensorRepository _sensorRepository
+    +GetAllSensorsAsync(bool): Task<List<SensorModel>>
+    +GetSensorsByStatusAsync(string): Task<List<SensorModel>>
+  }
+
+  SensorService --> ISensorRepository
+}
+
+package CourseworkApp.ViewModels {
+  class SensorViewModel {
+    -SensorService _sensorService
+    +ObservableCollection<SensorModel> Sensors
+    +bool IsBusy
+    +bool HasNoSensors
+    +Command RefreshSensorsCommand
+    +LoadSensorsAsync(bool): Task
+  }
+
+  SensorViewModel --> SensorService
+}
+
+package CourseworkApp.Views {
+  class SensorPage {
+    -SensorViewModel _viewModel
+    +SensorPage(SensorViewModel)
+  }
+
+  SensorPage --> SensorViewModel
+}
+
+@enduml
