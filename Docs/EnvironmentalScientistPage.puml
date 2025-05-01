@@ -1,0 +1,60 @@
+@startuml
+' Package declaration (optional)
+package "Environmental Scientist Feature" {
+
+  ' ViewModel class
+  class EnvironmentalScientistViewModel {
+    - ObservableCollection<String> categories
+    - String selectedCategory
+    - ObservableCollection<Measurement> displayedData
+    - DateTime startDate
+    - DateTime endDate
+    - DateTime minDate
+    - DateTime maxDate
+    - bool isLoading
+    - ObservableCollection<ChartPoint> ChartData
+    - WeatherRepository _weatherRepository
+
+    + EnvironmentalScientistViewModel(WeatherRepository)
+    + LoadDataCommand() : IAsyncRelayCommand
+    - LoadDataAsync() : Task
+    - LoadWeatherDataFromRepositoryAsync() : Task
+    - LoadMockData() : void
+  }
+
+  ' Repository class
+  class WeatherRepository {
+    + GetWeatherDataByDateRangeAsync(DateTime, DateTime) : Task<List<WeatherSensor>>
+  }
+
+  ' Model classes
+  class Measurement {
+    + String Date
+    + double Value
+    + String Detail
+  }
+
+  class ChartPoint {
+    + String Label
+    + double Value
+  }
+
+  class WeatherSensor {
+    + int Id
+    + String Name
+    + DateTime Time
+    + decimal Temperature_2m
+    + decimal Relative_Humidity_2m
+    + decimal Wind_Speed_10m
+    + decimal Wind_Direction_10m
+    + DateTime StartDate
+    + DateTime EndDate
+  }
+
+  ' Relationships
+  EnvironmentalScientistViewModel --> WeatherRepository : uses
+  EnvironmentalScientistViewModel "1" *-- "*" Measurement : displays
+  EnvironmentalScientistViewModel "1" *-- "*" ChartPoint : charts
+}
+
+@enduml
