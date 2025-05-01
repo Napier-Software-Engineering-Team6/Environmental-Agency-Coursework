@@ -6,9 +6,6 @@
               x:Class="CourseworkApp.Views.EnvironmentalScientist"
               BackgroundColor="#FF212520">
 
-    <ContentPage.BindingContext>
-        <viewmodels:EnvironmentalScientistViewModel />
-    </ContentPage.BindingContext>
 
     <VerticalStackLayout Padding="20" Spacing="20">
         <Label Text="EnvironmentalScientist" FontSize="24" HorizontalOptions="Center" />

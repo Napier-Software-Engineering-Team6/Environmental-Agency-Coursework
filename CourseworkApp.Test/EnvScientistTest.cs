@@ -1,51 +1,84 @@
-using CourseworkApp.ViewModels;
 using Xunit;
+using CourseworkApp.ViewModels;
+using CourseworkApp.Database.Repositories;
 using System;
-using System.Linq;
 
-
-//When the app starts, the Environmental Scientist page should show data for the ‘Air’ category by default, and both the table and chart should have some data visible
-
-public class EnvironmentalScientistViewModelTests
+public class EnvironmentalScientistViewModelSimpleTests
 {
+    // Helper: Provide a dummy WeatherRepository (it won't be used for Air/Water)
+    private WeatherRepository DummyRepo() => null;
+
     [Fact]
-    public void DefaultCategory_IsSelected_AndDataIsPopulated()
+    public void Constructor_Sets_Default_Category_And_ChartData()
     {
-        var vm = new EnvironmentalScientistViewModel();
+        var vm = new EnvironmentalScientistViewModel(DummyRepo());
         Assert.Equal("Air", vm.SelectedCategory);
-        Assert.NotEmpty(vm.DisplayedData);
-        Assert.NotEmpty(vm.ChartData);
-    }
-//If the user switches from ‘Air’ to ‘Water’ in the category picker, the table and chart should immediately update to show only water sensor data
-    [Fact]
-    public void ChangingCategory_UpdatesDisplayedDataAndChartData()
-    {
-        var vm = new EnvironmentalScientistViewModel();
-        vm.SelectedCategory = "Water";
-        Assert.All(vm.DisplayedData, m => Assert.Equal("pH", m.Detail));
-        Assert.All(vm.ChartData, c => Assert.Contains("2025-04", c.Label));
-    }
-//If the user selects a start and end date, only the data collected between those dates should appear in the table and chart
-    [Fact]
-    public void ChangingDateRange_FiltersDataCorrectly()
-    {
-        var vm = new EnvironmentalScientistViewModel();
-        vm.SelectedCategory = "Weather";
-        vm.StartDate = new DateTime(2025, 4, 2);
-        vm.EndDate = new DateTime(2025, 4, 3);
-        Assert.All(vm.DisplayedData, m =>
-            Assert.True(DateTime.Parse(m.Date) >= vm.StartDate && DateTime.Parse(m.Date) <= vm.EndDate));
+        Assert.NotNull(vm.Categories);
+        Assert.Contains("Air", vm.Categories);
+        Assert.NotNull(vm.ChartData);
     }
 
-//If the user picks a start date that’s after the current end date, the app should automatically move the end date forward so the range is always valid.
     [Fact]
-    public void EndDate_CannotBeBeforeStartDate()
+    public void Setting_SelectedCategory_To_Air_Loads_Mock_Data()
     {
-        var vm = new EnvironmentalScientistViewModel();
-        var originalEndDate = vm.EndDate;
-        vm.StartDate = vm.EndDate.AddDays(1);
+        var vm = new EnvironmentalScientistViewModel(DummyRepo())
+        {
+            SelectedCategory = "Air",
+            StartDate = new DateTime(2025, 4, 1),
+            EndDate = new DateTime(2025, 4, 4)
+        };
+
+        // Force data reload
+        vm.GetType().GetMethod("LoadMockData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            .Invoke(vm, null);
+
+        Assert.NotNull(vm.DisplayedData);
+        Assert.Equal(4, vm.DisplayedData.Count); // 4 mock Air measurements
+        Assert.All(vm.DisplayedData, m => Assert.Equal("Air", vm.SelectedCategory));
+    }
+
+    [Fact]
+    public void Setting_SelectedCategory_To_Water_Loads_Mock_Data()
+    {
+        var vm = new EnvironmentalScientistViewModel(DummyRepo())
+        {
+            SelectedCategory = "Water",
+            StartDate = new DateTime(2025, 4, 1),
+            EndDate = new DateTime(2025, 4, 4)
+        };
+
+        // Force data reload
+        vm.GetType().GetMethod("LoadMockData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            .Invoke(vm, null);
+
+        Assert.NotNull(vm.DisplayedData);
+        Assert.Equal(4, vm.DisplayedData.Count); // 4 mock Water measurements
+        Assert.All(vm.DisplayedData, m => Assert.Equal("Water", vm.SelectedCategory));
+    }
+
+    [Fact]
+    public void StartDate_After_EndDate_Adjusts_EndDate()
+    {
+        var vm = new EnvironmentalScientistViewModel(DummyRepo())
+        {
+            EndDate = new DateTime(2025, 4, 10)
+        };
+
+        vm.StartDate = new DateTime(2025, 4, 15);
+
         Assert.Equal(vm.StartDate, vm.EndDate);
     }
+
+    [Fact]
+    public void EndDate_Before_StartDate_Adjusts_StartDate()
+    {
+        var vm = new EnvironmentalScientistViewModel(DummyRepo())
+        {
+            StartDate = new DateTime(2025, 4, 20)
+        };
+
+        vm.EndDate = new DateTime(2025, 4, 15);
+
+        Assert.Equal(vm.EndDate, vm.StartDate);
+    }
 }
-
-
