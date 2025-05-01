@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CourseworkApp.ViewModels"
+             xmlns:converters="clr-namespace:CourseworkApp.Converters"
+             x:Class="CourseworkApp.Views.ConfigForm"
+             Title="Edit Configuration"
+             x:DataType="viewmodels:ConfigFormViewModel">
+
+  <ContentPage.Resources>
+    <converters:StringToBoolConverter x:Key="StringToBoolConverter"/>
+  </ContentPage.Resources>
+
+  <ScrollView>
+    <VerticalStackLayout Padding="20"
+                         Spacing="15">
+
+      <Label Text="Edit Sensor Configuration"
+             FontSize="Large"
+             FontAttributes="Bold"
+             HorizontalOptions="Center"/>
+
+      <HorizontalStackLayout Spacing="10">
+        <Label Text="Config ID:"
+               VerticalOptions="Center"
+               FontAttributes="Bold"/>
+        <Label Text="{Binding ConfigId}"
+               VerticalOptions="Center"/>
+      </HorizontalStackLayout>
+
+      <Label Text="Monitor Frequency (seconds):"
+             FontAttributes="Bold"/>
+      <Entry Text="{Binding MonitorFrequencySeconds}"
+             Keyboard="Numeric"/>
+
+      <Label Text="Monitor Duration (seconds):"
+             FontAttributes="Bold"/>
+      <Entry Text="{Binding MonitorDurationSeconds}"
+             Keyboard="Numeric"/>
+
+      <Label Text="Location Latitude:"
+             FontAttributes="Bold"/>
+      <Entry Text="{Binding LocationLatitude}"
+             Keyboard="Numeric"/>
+
+      <Label Text="Location Longitude:"
+             FontAttributes="Bold"/>
+      <Entry Text="{Binding LocationLongitude}"
+             Keyboard="Numeric"/>
+
+      <HorizontalStackLayout Spacing="10"
+                             VerticalOptions="Center">
+        <Label Text="Is Active:"
+               VerticalOptions="Center"
+               FontAttributes="Bold"/>
+        <Switch IsToggled="{Binding IsActive}"
+                VerticalOptions="Center"/>
+      </HorizontalStackLayout>
+
+      <Label Text="{Binding ErrorMessage}"
+             TextColor="Red"
+             IsVisible="{Binding ErrorMessage, Converter={StaticResource StringToBoolConverter}}"/>
+
+      <Grid ColumnDefinitions="*,*"
+            ColumnSpacing="10"
+            Margin="0,20,0,0">
+        <Button Grid.Column="0"
+                Text="Save"
+                Command="{Binding SubmitCommand}"/>
+        <Button Grid.Column="1"
+                Text="Cancel"
+                Command="{Binding CancelCommand}"
+                BackgroundColor="Gray"/>
+      </Grid>
+
+      <ActivityIndicator IsRunning="{Binding IsBusy}"
+                         IsVisible="{Binding IsBusy}"
+                         HorizontalOptions="Center"
+                         VerticalOptions="CenterAndExpand"/>
+
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>
