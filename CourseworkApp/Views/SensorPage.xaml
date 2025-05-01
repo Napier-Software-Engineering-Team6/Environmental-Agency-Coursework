@@ -6,6 +6,12 @@
     xmlns:viewmodels="clr-namespace:CourseworkApp.ViewModels"
     Title="Sensor Status">
 
+    <!--
+        @brief View that displays a list of sensor data.
+        @remarks Uses MVVM with SensorViewModel as the binding context.
+        @author Daniel
+        @date 2025-05-01
+    -->
     <ContentPage.Content>
         <RefreshView
             Command="{Binding RefreshSensorsCommand}"
@@ -13,7 +19,9 @@
 
             <StackLayout>
 
-                <!-- Manual Refresh Button -->
+                <!--
+                    @brief Button allowing users to manually trigger a refresh of sensor data.
+                -->
                 <Button
                     Text="Refresh Sensors"
                     Command="{Binding RefreshSensorsCommand}"
@@ -22,7 +30,9 @@
                     CornerRadius="10"
                     HorizontalOptions="Center" />
 
-                <!-- Empty state message -->
+                <!--
+                    @brief Message shown when there are no sensors in the collection.
+                -->
                 <Label Text="No sensor data available."
                        HorizontalOptions="Center"
                        VerticalOptions="Center"
@@ -30,14 +40,22 @@
                        FontAttributes="Italic"
                        IsVisible="{Binding HasNoSensors}" />
 
-                <!-- Main sensor list -->
+                <!--
+                    @brief Displays each sensor inside a styled frame.
+                -->
                 <CollectionView ItemsSource="{Binding Sensors}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame BorderColor="LightGray" BackgroundColor="#1C1C1C" CornerRadius="10" Margin="5">
                                 <StackLayout Padding="10">
+
+                                    <!-- Sensor Name -->
                                     <Label Text="{Binding Name}" FontSize="18" FontAttributes="Bold" />
+
+                                    <!-- Sensor Location -->
                                     <Label Text="{Binding Location}" FontSize="14" TextColor="Gray" />
+
+                                    <!-- Sensor Status with color-coded trigger -->
                                     <Label Text="{Binding Status}" FontSize="14">
                                         <Label.Triggers>
                                             <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Active">
@@ -51,7 +69,11 @@
                                             </DataTrigger>
                                         </Label.Triggers>
                                     </Label>
-                                    <Label Text="{Binding LastUpdated, StringFormat='Last updated: {0:g}'}" FontSize="12" TextColor="DarkGray" />
+
+                                    <!-- Last Updated Timestamp -->
+                                    <Label Text="{Binding LastUpdated, StringFormat='Last updated: {0:g}'}"
+                                           FontSize="12"
+                                           TextColor="DarkGray" />
                                 </StackLayout>
                             </Frame>
                         </DataTemplate>
