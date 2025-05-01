@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace CourseworkApp.ViewModels
 {
@@ -13,6 +14,7 @@ namespace CourseworkApp.ViewModels
         public ObservableCollection<SensorModel> Sensors { get; set; } = new();
 
         public bool IsBusy { get; set; }
+        public bool HasNoSensors => Sensors.Count == 0;
 
         public Command RefreshSensorsCommand { get; }
 
@@ -35,6 +37,7 @@ namespace CourseworkApp.ViewModels
                 {
                     Sensors.Add(sensor);
                 }
+
                 Console.WriteLine($">>> Loaded {sensors.Count} sensors.");
             }
             catch (Exception ex)
@@ -44,6 +47,7 @@ namespace CourseworkApp.ViewModels
             finally
             {
                 IsBusy = false;
+                OnPropertyChanged(nameof(HasNoSensors)); // Trigger UI to recheck visibility binding
             }
         }
 

@@ -7,21 +7,30 @@
     Title="Sensor Status">
 
     <ContentPage.Content>
-        <StackLayout Padding="10" Spacing="10">
-            <!-- Manual Refresh Button -->
-            <Button
-                Text="Refresh Sensors"
-                Command="{Binding RefreshSensorsCommand}"
-                BackgroundColor="DarkSlateBlue"
-                TextColor="White"
-                CornerRadius="10"
-                HorizontalOptions="Center" />
+        <RefreshView
+            Command="{Binding RefreshSensorsCommand}"
+            IsRefreshing="{Binding IsBusy}">
 
-            <!-- Pull-to-refresh -->
-            <RefreshView
-                Command="{Binding RefreshSensorsCommand}"
-                IsRefreshing="{Binding IsBusy}">
+            <StackLayout>
 
+                <!-- Manual Refresh Button -->
+                <Button
+                    Text="Refresh Sensors"
+                    Command="{Binding RefreshSensorsCommand}"
+                    BackgroundColor="DarkSlateBlue"
+                    TextColor="White"
+                    CornerRadius="10"
+                    HorizontalOptions="Center" />
+
+                <!-- Empty state message -->
+                <Label Text="No sensor data available."
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       TextColor="Gray"
+                       FontAttributes="Italic"
+                       IsVisible="{Binding HasNoSensors}" />
+
+                <!-- Main sensor list -->
                 <CollectionView ItemsSource="{Binding Sensors}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
@@ -48,7 +57,8 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-            </RefreshView>
-        </StackLayout>
+
+            </StackLayout>
+        </RefreshView>
     </ContentPage.Content>
 </ContentPage>
