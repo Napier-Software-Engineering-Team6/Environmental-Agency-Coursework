@@ -90,7 +90,45 @@ namespace CourseworkApp.Database.Data
                         Wind_Direction_10m = 90.0m,
                         StartDate = DateTime.Now.AddDays(-2),
                         EndDate = DateTime.Now.AddDays(-1)
+                    },
+                     
+                    new WeatherSensor
+                    {
+                        Id = 3,
+                        Name = "Default Sensor",
+                        Time = DateTime.Now.AddDays(-3),
+                        Temperature_2m = 11.5m,
+                        Relative_Humidity_2m = 64.0m,
+                        Wind_Speed_10m = 11.1m,
+                        Wind_Direction_10m = 44.0m,
+                        StartDate = DateTime.Now.AddDays(-5),
+                        EndDate = DateTime.Now.AddDays(-10)
+                    },
+                                        new WeatherSensor
+                    {
+                        Id = 4,
+                        Name = "Default Sensor",
+                        Time = DateTime.Now.AddDays(-3),
+                        Temperature_2m = 15.5m,
+                        Relative_Humidity_2m = 65.0m,
+                        Wind_Speed_10m = 10.3m,
+                        Wind_Direction_10m = 47.0m,
+                        StartDate = DateTime.Now.AddDays(-3),
+                        EndDate = DateTime.Now.AddDays(-2)
+                    },
+                                        new WeatherSensor
+                    {
+                        Id = 5,
+                        Name = "Default Sensor",
+                        Time = DateTime.Now.AddDays(-7),
+                        Temperature_2m = 17.5m,
+                        Relative_Humidity_2m = 60.0m,
+                        Wind_Speed_10m = 10.3m,
+                        Wind_Direction_10m = 45.0m,
+                        StartDate = DateTime.Now.AddDays(-1),
+                        EndDate = DateTime.Now.AddDays(-1)
                     }
+                    
                 );
             });
         }
