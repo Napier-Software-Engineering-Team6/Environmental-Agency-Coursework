@@ -14,9 +14,9 @@ namespace CourseworkApp.Services
             _sensorRepository = sensorRepository;
         }
 
-        public virtual Task<List<SensorModel>> GetAllSensorsAsync()
+        public virtual Task<List<SensorModel>> GetAllSensorsAsync(bool forceReload = false)
         {
-            return _sensorRepository.GetAllSensorsAsync();
+            return _sensorRepository.GetAllSensorsAsync(forceReload);
         }
 
         public virtual Task<List<SensorModel>> GetSensorsByStatusAsync(string status)

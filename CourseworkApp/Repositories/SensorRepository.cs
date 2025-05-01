@@ -13,9 +13,14 @@ namespace CourseworkApp.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<List<SensorModel>> GetAllSensorsAsync()
+        public async Task<List<SensorModel>> GetAllSensorsAsync(bool forceReload = false)
         {
-            return await _dbContext.Sensors.ToListAsync();
+            var query = _dbContext.Sensors.AsQueryable();
+
+            if (forceReload)
+                query = query.AsNoTracking();
+
+            return await query.OrderBy(s => s.Id).ToListAsync();
         }
 
         public async Task<List<SensorModel>> GetSensorsByStatusAsync(string status)

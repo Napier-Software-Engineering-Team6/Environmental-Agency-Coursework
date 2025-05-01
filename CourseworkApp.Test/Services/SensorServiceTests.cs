@@ -29,11 +29,11 @@ namespace CourseworkApp.Tests.Services
                 new SensorModel { Id = 2, Name = "Sensor 2", Status = "Inactive" }
             };
 
-            _mockRepository.Setup(repo => repo.GetAllSensorsAsync())
+            _mockRepository.Setup(repo => repo.GetAllSensorsAsync(false))
                            .ReturnsAsync(expectedSensors);
 
             // Act
-            var result = await _sensorService.GetAllSensorsAsync();
+            var result = await _sensorService.GetAllSensorsAsync(false);
 
             // Assert
             Assert.Equal(2, result.Count);

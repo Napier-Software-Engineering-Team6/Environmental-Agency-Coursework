@@ -4,68 +4,42 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using System;
-using Microsoft.Maui.Controls;
 
 namespace CourseworkApp.ViewModels
 {
     public class SensorViewModel : INotifyPropertyChanged
     {
         private readonly SensorService _sensorService;
+        public ObservableCollection<SensorModel> Sensors { get; set; } = new();
 
-        public ObservableCollection<SensorModel> Sensors { get; set; } = new ObservableCollection<SensorModel>();
+        public bool IsBusy { get; set; }
 
-        public ICommand LoadSensorsCommand { get; }
-
-        public ICommand RefreshSensorsCommand { get; }
-
-
-        //private backing field for IsBusy property
-        private bool isBusy;
-        //The public property. Exposes the value to the outside (e.g., the UI) 
-        public bool IsBusy
-        {
-            get => isBusy;
-            set
-            {
-                if (isBusy != value)
-                {
-                    isBusy = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        public Command RefreshSensorsCommand { get; }
 
         public SensorViewModel(SensorService sensorService)
         {
             _sensorService = sensorService;
-            //Both LoadSensorsCommand and RefreshSensorsCommand point to the same method (LoadSensorsAsync()), so no duplicated loading logic.DRY (Don't Repeat Yourself).
-            LoadSensorsCommand = new Command(async () => await LoadSensorsAsync());
-            RefreshSensorsCommand = new Command(async () => await LoadSensorsAsync());
-
+            RefreshSensorsCommand = new Command(async () => await LoadSensorsAsync(forceReload: true));
         }
 
-        public async Task LoadSensorsAsync()
+        public async Task LoadSensorsAsync(bool forceReload = false)
         {
             if (IsBusy) return;
 
+            IsBusy = true;
             try
             {
-                IsBusy = true;
-
-                var sensors = await _sensorService.GetAllSensorsAsync();
-
                 Sensors.Clear();
+                var sensors = await _sensorService.GetAllSensorsAsync(forceReload);
                 foreach (var sensor in sensors)
                 {
                     Sensors.Add(sensor);
                 }
+                Console.WriteLine($">>> Loaded {sensors.Count} sensors.");
             }
             catch (Exception ex)
             {
-                // Handle exceptions (e.g., log error, show alert)
-                Console.WriteLine($"Error loading sensors: {ex.Message}");
+                Console.WriteLine($">>> Error loading sensors: {ex.Message}");
             }
             finally
             {
@@ -74,7 +48,6 @@ namespace CourseworkApp.ViewModels
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

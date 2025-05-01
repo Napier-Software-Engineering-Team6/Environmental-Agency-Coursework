@@ -29,7 +29,7 @@ namespace CourseworkApp.Test.ViewModels
                 new SensorModel { Id = 2, Name = "Sensor 2", Status = "Inactive" }
             };
 
-            _mockSensorService.Setup(service => service.GetAllSensorsAsync())
+            _mockSensorService.Setup(service => service.GetAllSensorsAsync(false))
                               .ReturnsAsync(expectedSensors);
 
             // Act
@@ -46,7 +46,7 @@ namespace CourseworkApp.Test.ViewModels
         {
             // Arrange
             var expectedSensors = new List<SensorModel>();
-            _mockSensorService.Setup(service => service.GetAllSensorsAsync())
+            _mockSensorService.Setup(service => service.GetAllSensorsAsync(false))
                             .ReturnsAsync(expectedSensors);
 
             // Act
