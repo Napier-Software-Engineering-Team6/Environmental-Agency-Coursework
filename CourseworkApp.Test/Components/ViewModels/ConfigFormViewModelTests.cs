@@ -115,9 +115,36 @@ public class ConfigFormViewModelTests
   public async Task ValidateAsync_ReturnsTrue_WhenValuesAreValid()
   {
     // Arrange
+    var sensorConfig = new SensorConfigurations
+    {
+      ConfigId = 123, // Give it an ID
+      SensorType = "TestSensor",
+      ConfigName = "ValidConfig",
+      ConfigData = new BaseSensorConfig
+      {
+        MonitorFrequencySeconds = 10,
+        MonitorDurationSeconds = 20,
+        LocationLatitude = 50.0,
+        LocationLongitude = -1.0
+      },
+      IsActive = true,
+      CreatedAt = DateTime.UtcNow
+    };
+
+    _viewModel.ConfigToEdit = sensorConfig;
+
     _viewModel.MonitorFrequencySeconds = 10;
     _viewModel.MonitorDurationSeconds = 20;
+    _viewModel.LocationLatitude = 50.0;
+    _viewModel.LocationLongitude = -1.0;
     _viewModel.ErrorMessage = "Initial error";
+
+    _mockValidationService
+        .Setup(v => v.ValidateConfig(It.IsAny<SensorConfigurations>()))
+        .Returns(new List<string>());
+
+    _viewModel.ErrorMessage = "Initial error";
+
 
     // Act
     var isValid = await _viewModel.CallValidateAsync();

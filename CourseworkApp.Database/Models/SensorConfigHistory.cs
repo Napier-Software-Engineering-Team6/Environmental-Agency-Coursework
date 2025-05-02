@@ -11,17 +11,11 @@ public class SensorConfigHistory
 {
   [Required]
   public int HistoryId { get; set; }
-  [Required]
-
-  public required int SensorId { get; set; }
-  [ForeignKey(nameof(SensorId))]
-  public Sensors? Sensor { get; set; }
 
   public int? ConfigId { get; set; }
   [ForeignKey(nameof(ConfigId))]
   public SensorConfigurations? Config { get; set; }
   public int? FirmwareId { get; set; }
-  [Required]
   [ForeignKey(nameof(FirmwareId))]
   public FirmwareConfigurations? Firmware { get; set; }
   public required string ActionType { get; set; }

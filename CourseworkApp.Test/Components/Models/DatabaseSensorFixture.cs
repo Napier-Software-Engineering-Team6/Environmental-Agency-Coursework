@@ -144,7 +144,6 @@ public class DatabaseSensorFixture
 
     var sensorConfigHistory1 = new SensorConfigHistory()
     {
-      SensorId = sensorEntry1.SensorId,
       ConfigId = sensorConfig1.ConfigId,
       ActionType = "Update",
       Status = "Success",
@@ -152,14 +151,13 @@ public class DatabaseSensorFixture
       PerformedBy = "Admin1",
       Timestamp = DateTime.Now
     };
-    sensorConfigHistory1.Sensor = sensorEntry1;
+
     sensorConfigHistory1.Config = sensorConfig1;
 
     _testDbContext.Add(sensorConfigHistory1);
 
     var sensorConfigHistory2 = new SensorConfigHistory()
     {
-      SensorId = sensorEntry2.SensorId,
       ConfigId = sensorConfig2.ConfigId,
       ActionType = "Update",
       Status = "Success",
@@ -167,14 +165,13 @@ public class DatabaseSensorFixture
       PerformedBy = "Admin2",
       Timestamp = DateTime.Now
     };
-    sensorConfigHistory2.Sensor = sensorEntry2;
+
     sensorConfigHistory2.Config = sensorConfig2;
 
     _testDbContext.Add(sensorConfigHistory2);
 
     var sensorConfigHistory3 = new SensorConfigHistory()
     {
-      SensorId = sensorEntry3.SensorId,
       FirmwareId = firmwareConfig3.FirmwareId,
       ActionType = "Update",
       Status = "Success",
@@ -182,7 +179,6 @@ public class DatabaseSensorFixture
       PerformedBy = "Admin3",
       Timestamp = DateTime.Now
     };
-    sensorConfigHistory3.Sensor = sensorEntry3;
     sensorConfigHistory3.Firmware = firmwareConfig3;
 
     _testDbContext.Add(sensorConfigHistory3);

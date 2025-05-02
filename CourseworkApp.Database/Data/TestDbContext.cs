@@ -79,11 +79,6 @@ namespace CourseworkApp.Database.Data
 
       modelBuilder.Entity<SensorConfigHistory>(entity =>
       {
-        entity.HasOne(h => h.Sensor)
-              .WithMany()
-              .HasForeignKey(h => h.SensorId)
-              .OnDelete(DeleteBehavior.Cascade);
-
         entity.HasOne(h => h.Config)
               .WithMany()
               .HasForeignKey(h => h.ConfigId)
