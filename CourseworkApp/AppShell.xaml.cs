@@ -11,5 +11,6 @@ public partial class AppShell : Shell
 
 		Routing.RegisterRoute("AdminConfig", typeof(AdminConfig));
 		Routing.RegisterRoute("AdminConfig/ConfigForm", typeof(ConfigForm));
+		Routing.RegisterRoute("AdminFirmware", typeof(AdminFirmware));
 	}
 }
