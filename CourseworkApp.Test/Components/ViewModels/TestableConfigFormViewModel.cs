@@ -17,9 +17,10 @@ public class TestableConfigFormViewModel : ConfigFormViewModel
       IValidationService validationService, // Keep this dependency even if ValidateAsync doesn't use it directly anymore, as the constructor requires it.
       INavigationService navigationService,
       ILoggingService loggingService,
-      ISensorConfigurationFactory configurationFactory
+      ISensorConfigurationFactory configurationFactory,
+      ISensorHistoryService sensorHistoryService
       )
-      : base(configurationService, validationService, navigationService, loggingService, configurationFactory)
+      : base(configurationService, validationService, navigationService, loggingService, configurationFactory, sensorHistoryService)
   {
   }
 

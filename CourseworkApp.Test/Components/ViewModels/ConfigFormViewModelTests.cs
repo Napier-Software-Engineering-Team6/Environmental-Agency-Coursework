@@ -18,6 +18,8 @@ public class ConfigFormViewModelTests
   private readonly Mock<INavigationService> _mockNavigationService;
   private readonly Mock<ILoggingService> _mockLoggingService;
   private readonly Mock<ISensorConfigurationFactory> _mockConfigFactory;
+
+  private readonly Mock<ISensorHistoryService> _mockSensorHistoryService;
   private readonly string _testUser = "TempUser";
 
   private readonly TestableConfigFormViewModel _viewModel;
@@ -29,6 +31,8 @@ public class ConfigFormViewModelTests
     _mockNavigationService = new Mock<INavigationService>();
     _mockLoggingService = new Mock<ILoggingService>();
     _mockConfigFactory = new Mock<ISensorConfigurationFactory>();
+    _mockSensorHistoryService = new Mock<ISensorHistoryService>();
+
 
 
     var defaultConfigData = new BaseSensorConfig
@@ -58,7 +62,8 @@ public class ConfigFormViewModelTests
         _mockValidationService.Object,
         _mockNavigationService.Object,
         _mockLoggingService.Object,
-        _mockConfigFactory.Object
+        _mockConfigFactory.Object,
+        _mockSensorHistoryService.Object
     );
   }
 

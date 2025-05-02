@@ -13,7 +13,9 @@ namespace CourseworkApp.ViewModels;
 public partial class ConfigFormViewModel : BaseFormViewModel
 {
 	private readonly IConfigurationService _configurationService;
-	private readonly IValidationService? _validationService;
+	private readonly IValidationService _validationService;
+
+	private readonly ISensorHistoryService _sensorHistoryService;
 
 
 	[ObservableProperty]
@@ -37,11 +39,12 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 	[ObservableProperty]
 	private bool isActive;
 
-	public ConfigFormViewModel(IConfigurationService configurationService, IValidationService validationService, INavigationService navigationService, ILoggingService loggingService, ISensorConfigurationFactory configurationFactory)
+	public ConfigFormViewModel(IConfigurationService configurationService, IValidationService validationService, INavigationService navigationService, ILoggingService loggingService, ISensorConfigurationFactory configurationFactory, ISensorHistoryService sensorHistoryService)
 			: base(navigationService, loggingService)
 	{
 		_configurationService = configurationService;
 		_validationService = validationService;
+		_sensorHistoryService = sensorHistoryService;
 
 		// Initialize properties to default values (this is fine)
 		ConfigId = 0;
@@ -101,14 +104,29 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 			bool success = await _configurationService.UpdateConfigurationAsync(ConfigToEdit, "TempUser");
 			if (success)
 			{
-				await LogActionAsync("Update Configuration", "Success", $"Config ID {ConfigToEdit.ConfigId} updated.");
+				await _sensorHistoryService.LogActionAsync(
+										configId: ConfigToEdit.ConfigId,
+										firmwareId: null,
+										actionType: "Configuration Update",
+										status: "Success",
+										details: $"Configuration '{ConfigToEdit.ConfigName}' updated.",
+										performedBy: "TempUser"
+										);
+				ErrorMessage = string.Empty;
 				return true;
 			}
 			else
 			{
 				ErrorMessage = "Failed to save configuration to the database.";
 				if (_loggingService != null) await _loggingService.LogErrorAsync($"ConfigurationService.UpdateConfigurationAsync failed for ConfigId {ConfigToEdit.ConfigId}.");
-				await LogActionAsync("Update Configuration", "Failed", $"Config ID {ConfigToEdit?.ConfigId} update failed.");
+				await _sensorHistoryService.LogActionAsync(
+					configId: ConfigToEdit.ConfigId,
+										firmwareId: null,
+										actionType: "Configuration Update",
+										status: "Failed",
+										details: $"Update attempt failed (service returned false). Config Name: '{ConfigToEdit.ConfigName}'.",
+										performedBy: "TempUser"
+				);
 				return false;
 			}
 		}
@@ -116,30 +134,37 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 		{
 			ErrorMessage = $"An error occurred while saving: {ex.Message}";
 			if (_loggingService != null) await _loggingService.LogErrorAsync($"Exception during UpdateConfigurationAsync for config {ConfigToEdit.ConfigId}.", ex);
-			await LogActionAsync("Update Configuration", "Error", $"Exception updating Config ID {ConfigToEdit?.ConfigId}: {ex.Message}");
+			await _sensorHistoryService.LogActionAsync(
+				configId: ConfigToEdit.ConfigId,
+								firmwareId: null,
+								actionType: "Configuration Update",
+								status: "Error",
+								details: $"Exception during update attempt: {ex.Message}",
+								performedBy: "TempUser"
+			);
 			return false;
 		}
 	}
 
-	protected override Task<bool> ValidateAsync()
+	protected override async Task<bool> ValidateAsync()
 
 	{
 		if (_validationService == null)
 		{
 			ErrorMessage = "Validation service is not available.";
-			return Task.FromResult(false);
+			return false;
 		}
 
 		if (ConfigToEdit == null)
 		{
 			ErrorMessage = "Configuration data is not available.";
-			return Task.FromResult(false);
+			return false;
 		}
 
 		if (ConfigToEdit.ConfigData == null)
 		{
 			ErrorMessage = "Configuration details (ConfigData) is incomplete.";
-			return Task.FromResult(false);
+			return false;
 		}
 
 		ConfigToEdit.ConfigData.MonitorFrequencySeconds = MonitorFrequencySeconds;
@@ -149,20 +174,41 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 
 		List<string> validationErrors = _validationService.ValidateConfig(ConfigToEdit);
 
-		bool isValid = !validationErrors.Any(); // Or validationErrors.Count == 0;
+		bool isValid = !validationErrors.Any();
 
 		if (!isValid)
 		{
+			string errorDetailsForDb = string.Join("; ", validationErrors);
 			ErrorMessage = string.Join(Environment.NewLine, validationErrors);
+
+
+
 			if (_loggingService != null) _ = _loggingService.LogWarningAsync($"Validation failed for Config ID {ConfigToEdit.ConfigId}: {ErrorMessage.Replace(Environment.NewLine, "; ")}");
+
+			if (ConfigToEdit.ConfigId > 0)
+			{
+				await _sensorHistoryService.LogActionAsync(
+										configId: ConfigToEdit.ConfigId,
+										firmwareId: null,
+										actionType: "Configuration Validation",
+										status: "Validation Failed",
+										details: $"Validation failed before update attempt. Errors: {errorDetailsForDb}",
+										performedBy: "TempUser"
+										);
+			}
+			else
+			{
+				if (_loggingService != null)
+					_ = _loggingService.LogErrorAsync($"Validation failed for config ({ConfigToEdit.ConfigId}). Not logging to SensorConfigHistory.");
+				ErrorMessage += $"{Environment.NewLine}(Note: Cannot log validation failure history for unsaved configuration)";
+			}
 		}
 		else
 		{
-			ErrorMessage = string.Empty; // Clear error message if validation passes
+			ErrorMessage = string.Empty;
 		}
-		return Task.FromResult(isValid);
+		return isValid;
 	}
-
 	protected override string GetEntityType()
 	{
 		return "SensorConfiguration";

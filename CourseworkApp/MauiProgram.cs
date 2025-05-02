@@ -37,6 +37,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IValidationService, ValidationService>();
 		builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
 		builder.Services.AddSingleton<ILoggingService, LoggingService>();
+		builder.Services.AddSingleton<ISensorHistoryService, SensorHistoryService>();
 
 #if DEBUG
 
