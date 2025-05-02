@@ -99,9 +99,6 @@ namespace CourseworkApp.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SensorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -114,8 +111,6 @@ namespace CourseworkApp.Database.Migrations
                     b.HasIndex("ConfigId");
 
                     b.HasIndex("FirmwareId");
-
-                    b.HasIndex("SensorId");
 
                     b.ToTable("SensorConfigHistory", null, t =>
                         {
@@ -193,17 +188,9 @@ namespace CourseworkApp.Database.Migrations
                         .HasForeignKey("FirmwareId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("CourseworkApp.Database.Models.Sensors", "Sensor")
-                        .WithMany()
-                        .HasForeignKey("SensorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Config");
 
                     b.Navigation("Firmware");
-
-                    b.Navigation("Sensor");
                 });
 
             modelBuilder.Entity("CourseworkApp.Database.Models.SensorConfigurations", b =>

@@ -16,7 +16,7 @@ public class ConfigurationService : IConfigurationService
 
   public ConfigurationService(IDbContextFactory<TestDbContext> dbContextFactory, ILoggingService loggingService)
   {
-    _dbContextFactory = dbContextFactory;
+    _dbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
     _loggingService = loggingService;
   }
 
@@ -107,18 +107,62 @@ public class ConfigurationService : IConfigurationService
       }
 
       var result = await context.SaveChangesAsync();
+      bool success = result > 0;
 
+      if (success)
+      {
+        string details = $"Configuration template {config.ConfigId} ({config.ConfigName}) was updated.";
+        await LogTemplateUpdateHistoryAsync(config.ConfigId, currentUser, details, "Success");
 
-      if (_loggingService != null) await _loggingService.LogInfoAsync($"Configuration updated successfully (ID: {config.ConfigId}).", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" }, { "ConfigId", config.ConfigId.ToString() } });
+        await _loggingService?.LogInfoAsync($"Configuration template updated successfully (ID: {config.ConfigId}).", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" }, { "ConfigId", config.ConfigId.ToString() } });
+      }
+      else
+      {
+        await _loggingService?.LogWarningAsync($"Configuration template update reported no changes saved for ID {config.ConfigId}.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+      }
 
-      return result > 0;
+      return success;
     }
     catch (Exception ex)
     {
-      if (_loggingService != null) await _loggingService.LogErrorAsync($"Error updating configuration (ID: {config?.ConfigId}).", ex, new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
-      Debug.WriteLine($"Error updating configuration (ID: {config?.ConfigId}): {ex.Message}");
+      string errorDetails = $"Error updating template {config?.ConfigId}: {ex.Message}";
+      await LogTemplateUpdateHistoryAsync(config?.ConfigId ?? 0, currentUser, errorDetails, "Failure");
 
+      await _loggingService?.LogErrorAsync($"Error updating configuration template (ID: {config?.ConfigId}).", ex, new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+      Debug.WriteLine($"Error updating configuration template (ID: {config?.ConfigId}): {ex.Message}");
       return false;
     }
   }
+  private async Task LogTemplateUpdateHistoryAsync(int configId, string performedBy, string details, string status)
+  {
+    if (configId <= 0 && status == "Failure")
+    {
+      details = $"Failed attempt to update invalid/null configuration template. {details}";
+    }
+
+    await using var logContext = await _dbContextFactory.CreateDbContextAsync();
+
+    var historyEntry = new SensorConfigHistory
+    {
+      ConfigId = (configId > 0) ? configId : (int?)null,
+      FirmwareId = null,
+      ActionType = "Update Configuration Template",
+      Status = status,
+      Details = details?.Length > 1000 ? details.Substring(0, 1000) : details ?? "",
+      PerformedBy = performedBy,
+      Timestamp = DateTime.UtcNow
+    };
+
+    try
+    {
+      logContext.SensorConfigHistoryDB.Add(historyEntry);
+      await logContext.SaveChangesAsync();
+    }
+    catch (Exception logEx)
+    {
+      await _loggingService?.LogErrorAsync($"CRITICAL: Failed to write template update to SensorConfigHistory for ConfigId {configId}. Status: {status}", logEx, new Dictionary<string, string> { { "User", performedBy } });
+      Debug.WriteLine($"CRITICAL: Failed to log sensor config template update history: {logEx.Message}");
+    }
+  }
+
 }
