@@ -67,13 +67,19 @@ public class ConfigurationService : IConfigurationService
   {
     if (config == null)
     {
-      if (_loggingService != null) await _loggingService.LogWarningAsync("Attempted to update null configuration.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+      if (_loggingService != null)
+      {
+        await _loggingService.LogWarningAsync("Attempted to update null configuration.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+      }
       return false;
     }
 
     if (config.ConfigId <= 0)
     {
-      if (_loggingService != null) await _loggingService.LogWarningAsync($"Attempted to update configuration with invalid ID: {config.ConfigId}.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+      if (_loggingService != null)
+      {
+        await _loggingService.LogWarningAsync($"Attempted to update configuration with invalid ID: {config.ConfigId}.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+      }
       return false;
     }
 
@@ -90,8 +96,11 @@ public class ConfigurationService : IConfigurationService
 
       if (existingConfig == null)
       {
-        if (_loggingService != null) await _loggingService.LogWarningAsync($"Configuration with ID {config.ConfigId} not found for update.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
-        Debug.WriteLine($"Configuration with ID {config.ConfigId} not found for update.");
+        if (_loggingService != null)
+        {
+          await _loggingService.LogWarningAsync($"Configuration with ID {config.ConfigId} not found for update.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+          Debug.WriteLine($"Configuration with ID {config.ConfigId} not found for update.");
+        }
         return false;
       }
 

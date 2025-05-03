@@ -89,7 +89,10 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 		if (ConfigToEdit == null || ConfigToEdit.ConfigData == null)
 		{
 			ErrorMessage = "Configuration data is not available or incomplete.";
-			if (_loggingService != null) await _loggingService.LogErrorAsync("SaveAsync called with null ConfigToEdit or ConfigData.");
+			if (_loggingService != null)
+			{
+				await _loggingService.LogErrorAsync("SaveAsync called with null ConfigToEdit or ConfigData.");
+			}
 			return false;
 		}
 
@@ -118,7 +121,10 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 			else
 			{
 				ErrorMessage = "Failed to save configuration to the database.";
-				if (_loggingService != null) await _loggingService.LogErrorAsync($"ConfigurationService.UpdateConfigurationAsync failed for ConfigId {ConfigToEdit.ConfigId}.");
+				if (_loggingService != null)
+				{
+					await _loggingService.LogErrorAsync($"ConfigurationService.UpdateConfigurationAsync failed for ConfigId {ConfigToEdit.ConfigId}.");
+				}
 				await _sensorHistoryService.LogActionAsync(
 					configId: ConfigToEdit.ConfigId,
 										firmwareId: null,
@@ -133,7 +139,10 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 		catch (Exception ex)
 		{
 			ErrorMessage = $"An error occurred while saving: {ex.Message}";
-			if (_loggingService != null) await _loggingService.LogErrorAsync($"Exception during UpdateConfigurationAsync for config {ConfigToEdit.ConfigId}.", ex);
+			if (_loggingService != null)
+			{
+				await _loggingService.LogErrorAsync($"Exception during UpdateConfigurationAsync for config {ConfigToEdit.ConfigId}.", ex);
+			}
 			await _sensorHistoryService.LogActionAsync(
 				configId: ConfigToEdit.ConfigId,
 								firmwareId: null,
@@ -183,8 +192,10 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 
 
 
-			if (_loggingService != null) _ = _loggingService.LogWarningAsync($"Validation failed for Config ID {ConfigToEdit.ConfigId}: {ErrorMessage.Replace(Environment.NewLine, "; ")}");
-
+			if (_loggingService != null)
+			{
+				_ = _loggingService.LogWarningAsync($"Validation failed for Config ID {ConfigToEdit.ConfigId}: {ErrorMessage.Replace(Environment.NewLine, "; ")}");
+			}
 			if (ConfigToEdit.ConfigId > 0)
 			{
 				await _sensorHistoryService.LogActionAsync(
