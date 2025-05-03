@@ -53,13 +53,16 @@ public abstract partial class BaseFormViewModel : ObservableObject
 		SuccessMessage = string.Empty;
 		IsBusy = true;
 
+		const string Failed = "Failed";
+		const string Success = "Success";
+
 
 
 		try
 		{
 			if (!await ValidateAsync())
 			{
-				await LogActionAsync(SubmitAction, "Failed", ErrorMessage);
+				await LogActionAsync(SubmitAction, Failed, ErrorMessage);
 				return;
 			}
 
@@ -67,19 +70,19 @@ public abstract partial class BaseFormViewModel : ObservableObject
 			if (result)
 			{
 				SuccessMessage = "Operation completed successfully.";
-				await LogActionAsync(SubmitAction, "Success", SuccessMessage);
+				await LogActionAsync(SubmitAction, Success, SuccessMessage);
 				await _navigationService.NavigateBackAsync();
 			}
 			else
 			{
 				ErrorMessage = "Failed to save changes.";
-				await LogActionAsync(SubmitAction, "Failed", ErrorMessage);
+				await LogActionAsync(SubmitAction, Failed, ErrorMessage);
 			}
 		}
 		catch (Exception ex)
 		{
 			ErrorMessage = $"Error: {ex.Message}";
-			await LogActionAsync(SubmitAction, "Failed", ErrorMessage);
+			await LogActionAsync(SubmitAction, Failed, ErrorMessage);
 		}
 		finally
 		{
