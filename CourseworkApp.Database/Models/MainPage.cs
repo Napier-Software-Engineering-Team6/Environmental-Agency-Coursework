@@ -8,9 +8,9 @@ namespace CourseworkApp.Database.Models;
 [PrimaryKey(nameof(Id))]
 public class MainPage
 {
-  [Required]
+
   public int Id { get; set; }
-  [Required]
+
   public required string Text { get; set; }
 
 }
