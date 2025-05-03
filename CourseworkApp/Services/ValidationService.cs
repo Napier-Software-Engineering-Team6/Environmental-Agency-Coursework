@@ -2,6 +2,7 @@ using System;
 using CourseworkApp.Database.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace CourseworkApp.Services;
 
@@ -9,6 +10,8 @@ public class ValidationService : IValidationService
 {
 
   public List<string> ValidateConfig(SensorConfigurations config)
+
+
   {
 
     var errors = new List<string>();
@@ -68,6 +71,67 @@ public class ValidationService : IValidationService
     else
     {
       System.Diagnostics.Debug.WriteLine($"Validation Failed with {errors.Count} errors.");
+    }
+
+    return errors;
+  }
+
+  public List<string> ValidateFirmware(FirmwareConfigurations firmware)
+  {
+    var errors = new List<string>();
+
+    if (firmware == null)
+    {
+      errors.Add("Validation failed: Firmware object is null.");
+      return errors;
+    }
+
+    if (string.IsNullOrWhiteSpace(firmware.SensorType))
+    {
+      errors.Add("Validation Failed: SensorType is empty.");
+    }
+
+
+    if (string.IsNullOrWhiteSpace(firmware.FirmwareVersion))
+    {
+      errors.Add("Validation Failed: FirmwareVersion is empty.");
+    }
+    else
+    {
+      var versionPattern = @"^\d+\.\d+\.\d+$";
+      if (!Regex.IsMatch(firmware.FirmwareVersion, versionPattern))
+      {
+        errors.Add("Validation Failed: FirmwareVersion format must be X.Y.Z (e.g., 1.0.0).");
+      }
+    }
+
+    // Validate Dates
+    // Check if dates are default/unset values
+    if (firmware.ReleaseDate == DateTime.MinValue)
+    {
+      errors.Add("Validation Failed: Release Date must be set.");
+    }
+
+    if (firmware.EndofLifeDate == DateTime.MinValue)
+    {
+      errors.Add("Validation Failed: End of Life Date must be set.");
+    }
+
+    if (firmware.ReleaseDate != DateTime.MinValue && firmware.EndofLifeDate != DateTime.MinValue)
+    {
+      if (firmware.EndofLifeDate < firmware.ReleaseDate)
+      {
+        errors.Add("Validation Failed: End of Life Date cannot be earlier than Release Date.");
+      }
+    }
+
+    if (errors.Count == 0)
+    {
+      System.Diagnostics.Debug.WriteLine("Firmware Validation Succeeded.");
+    }
+    else
+    {
+      System.Diagnostics.Debug.WriteLine($"Firmware Validation Failed with {errors.Count} errors.");
     }
 
     return errors;
