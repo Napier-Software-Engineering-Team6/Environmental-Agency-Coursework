@@ -1,5 +1,6 @@
 using Xunit;
-using CourseworkApp.Services; // Ensure this using still correctly points to your LoggingService location
+using CourseworkApp.Services;
+using CourseworkApp.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -195,7 +196,7 @@ public class LoggingServiceTests
   [InlineData("DeleteSensor", "Failed", "Failed to delete sensor.")]
   [InlineData("DataFetch", "success", "Data fetched.")]
   [InlineData("FirmwareUpdate", "failed", "Firmware update failed.")]
-  public async Task LogUserActionAsync_VariousStatuses_CompletesSuccessfully(string action, string status, string message)
+  public async Task LogUserActionAsync_VariousStatuses_CompletesSuccessfully(string action, string statusString, string message)
   {
     var service = CreateLoggingService();
     var properties = new Dictionary<string, string?> { { "User", "Admin" } };
@@ -209,7 +210,11 @@ public class LoggingServiceTests
       }
     }
 
-    var task = service.LogUserActionAsync(action, status, message, filteredProperties);
+    bool parseSuccess = Enum.TryParse<ActionStatus>(statusString, true, out ActionStatus statusEnum);
+
+    Assert.True(parseSuccess, $"Test setup failure: Invalid status string '{statusString}' provided to test.");
+
+    var task = service.LogUserActionAsync(action, statusEnum, message, filteredProperties);
     await task;
 
     Assert.True(task.IsCompletedSuccessfully);

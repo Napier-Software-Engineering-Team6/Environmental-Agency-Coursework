@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using CourseworkApp.Enums;
 
 namespace CourseworkApp.Services;
 
@@ -54,11 +55,12 @@ public class LoggingService : ILoggingService
     return LogAsync(LogLevel.Debug, message, properties: properties);
   }
 
-  public Task LogUserActionAsync(string action, string status, string message, IDictionary<string, string>? properties = null)
+  public Task LogUserActionAsync(string action, ActionStatus status, string message, IDictionary<string, string>? properties = null)
   {
     var combinedMessage = $"User Action:, Action='{action}', Status='{status}', - {message}";
 
-    var level = status.Equals("Failed", StringComparison.OrdinalIgnoreCase) ? LogLevel.Error : LogLevel.Information;
+    var level = status == ActionStatus.Failed ? LogLevel.Error : LogLevel.Information;
+
     return LogAsync(level, combinedMessage, properties: properties);
   }
 }

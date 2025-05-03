@@ -1,9 +1,9 @@
 using System;
 using CourseworkApp.Database.Models;
-
+using CourseworkApp.Common;
 namespace CourseworkApp.Services;
 
 public interface IValidationService
 {
-  List<string> ValidateConfig(SensorConfigurations config);
+  ValidationResult ValidateConfig(SensorConfigurations config);
 }

@@ -2,6 +2,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CourseworkApp.Database.Models;
 using CourseworkApp.Services;
 using CourseworkApp.Services.Factory;
+using CourseworkApp.Enums;
+using CourseworkApp.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Maui.Controls;
 using System.Collections.Generic;
@@ -181,14 +183,16 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 		ConfigToEdit.ConfigData.LocationLatitude = LocationLatitude;
 		ConfigToEdit.ConfigData.LocationLongitude = LocationLongitude;
 
-		List<string> validationErrors = _validationService.ValidateConfig(ConfigToEdit);
+		ValidationResult validationErrors = _validationService.ValidateConfig(ConfigToEdit);
 
-		bool isValid = !validationErrors.Any();
+		bool isValid = !validationErrors.Errors.Any();
 
 		if (!isValid)
 		{
-			string errorDetailsForDb = string.Join("; ", validationErrors);
-			ErrorMessage = string.Join(Environment.NewLine, validationErrors);
+			string errorDetailsForDb = string.Join("; ", validationErrors.Errors);
+
+
+			ErrorMessage = string.Join(Environment.NewLine, validationErrors.Errors);
 
 
 

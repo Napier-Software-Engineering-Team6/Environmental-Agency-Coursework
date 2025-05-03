@@ -6,6 +6,8 @@ using CourseworkApp.Services;
 using CourseworkApp.Services.Factory;
 using CourseworkApp.ViewModels;
 using CourseworkApp.Database.Models;
+using CourseworkApp.Common;
+using CourseworkApp.Enums;
 
 namespace CourseworkApp.Test.Components.ViewModels;
 
@@ -146,7 +148,7 @@ public class ConfigFormViewModelTests
 
     _mockValidationService
         .Setup(v => v.ValidateConfig(It.IsAny<SensorConfigurations>()))
-        .Returns(new List<string>());
+        .Returns(new ValidationResult { Status = ValidationStatus.Success, Errors = new List<string>() });
 
     _viewModel.ErrorMessage = "Initial error";
 
@@ -188,7 +190,7 @@ public class ConfigFormViewModelTests
     _viewModel.ErrorMessage = "Initial error";
 
     _mockConfigService.Setup(s => s.UpdateConfigurationAsync(It.IsAny<SensorConfigurations>(), _testUser))
-                     .ReturnsAsync(true);
+      .ReturnsAsync(true);
 
     // Act
     var result = await _viewModel.CallSaveAsync();

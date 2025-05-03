@@ -1,6 +1,7 @@
 using Xunit;
 using Moq;
 using CourseworkApp.Services;
+using CourseworkApp.Enums;
 using CourseworkApp.ViewModels;
 using System.Threading.Tasks;
 
@@ -40,7 +41,7 @@ namespace CourseworkApp.Test.Components.ViewModels
       Assert.Empty(_viewModel.SuccessMessage);
       Assert.False(_viewModel.IsBusy);
 
-      _mockLoggingService.Verify(l => l.LogUserActionAsync("Submit", "Failed", "Validation Failed Here", null), Times.Once);
+      _mockLoggingService.Verify(l => l.LogUserActionAsync("Submit", ActionStatus.Failed, "Validation Failed Here", null), Times.Once);
       _mockNavigationService.Verify(n => n.NavigateBackAsync(), Times.Never);
 
     }
@@ -56,7 +57,7 @@ namespace CourseworkApp.Test.Components.ViewModels
       await _viewModel.CancelCommand.ExecuteAsync(null);
 
       // Assert
-      _mockLoggingService.Verify(l => l.LogUserActionAsync("Cancel", "Success", "SpecificItem form cancelled.", null), Times.Once);
+      _mockLoggingService.Verify(l => l.LogUserActionAsync("Cancel", ActionStatus.Success, "SpecificItem form cancelled.", null), Times.Once);
       _mockNavigationService.Verify(n => n.NavigateBackAsync(), Times.Once);
     }
   }

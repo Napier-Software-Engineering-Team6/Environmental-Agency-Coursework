@@ -4,6 +4,7 @@ using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CourseworkApp.Services;
+using CourseworkApp.Enums;
 
 namespace CourseworkApp.ViewModels;
 
@@ -28,9 +29,17 @@ public abstract partial class BaseFormViewModel : ObservableObject
 		_loggingService = loggingService;
 	}
 
-	protected async Task LogActionAsync(string action, string status, string message)
+	protected async Task LogActionAsync(string action, string statusString, string message)
+
 	{
-		await _loggingService.LogUserActionAsync(action, status, message);
+		if (Enum.TryParse<ActionStatus>(statusString, true, out ActionStatus statusEnum))
+		{
+			await _loggingService.LogUserActionAsync(action, statusEnum, message);
+		}
+		else
+		{
+			await _loggingService.LogErrorAsync($"Failed to parse ActionStatus: {statusString} for action: {action}");
+		}
 	}
 
 	protected abstract Task<bool> ValidateAsync();
