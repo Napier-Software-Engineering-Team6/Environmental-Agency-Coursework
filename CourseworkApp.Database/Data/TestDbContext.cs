@@ -10,11 +10,11 @@ namespace CourseworkApp.Database.Data
   public abstract class GenericDbContext : DbContext
   {
     internal abstract String connectionName { get; set; }
-    public GenericDbContext()
+    protected GenericDbContext()
     {
     }
 
-    public GenericDbContext(DbContextOptions options) : base(options)
+    protected GenericDbContext(DbContextOptions options) : base(options)
     {
     }
 

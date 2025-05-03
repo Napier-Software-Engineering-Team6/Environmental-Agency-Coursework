@@ -5,7 +5,7 @@ namespace CourseworkApp.Services;
 
 public interface INavigationService
 {
-  Task GoToAsync(string route, IDictionary<string, object?> parameters = null);
+  Task GoToAsync(string route, IDictionary<string, object?>? parameters = null);
 
   Task NavigateBackAsync();
 

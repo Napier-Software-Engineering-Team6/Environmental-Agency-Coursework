@@ -9,7 +9,7 @@ namespace CourseworkApp.Services;
 
 public class LoggingService : ILoggingService
 {
-  public Task LogAsync(LogLevel level, string message, Exception? exception = null, IDictionary<string, string>? properties = null)
+  public Task LogAsync(LogLevel level, string message, Exception? exception = null, IDictionary<string, string?>? properties = null)
   {
     var logMessage = new StringBuilder();
     logMessage.Append($"[{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}] [{level.ToString().ToUpper()}] {message}");

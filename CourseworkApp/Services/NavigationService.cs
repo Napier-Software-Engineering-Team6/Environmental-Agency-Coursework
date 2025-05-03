@@ -7,7 +7,7 @@ namespace CourseworkApp.Services;
 
 public class NavigationService : INavigationService
 {
-  public Task GoToAsync(string route, IDictionary<string, object?> parameters = null)
+  public Task GoToAsync(string route, IDictionary<string, object?>? parameters = null)
   {
     if (Shell.Current == null)
     {

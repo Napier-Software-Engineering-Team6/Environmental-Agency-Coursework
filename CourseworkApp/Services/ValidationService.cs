@@ -40,27 +40,29 @@ public class ValidationService : IValidationService
     {
       result.Errors.Add($"{ValidationFailed} ConfigData is null.");
     }
-
-    // Validate properties of BaseSensorConfig
-    // Assuming MonitorFrequencySeconds and MonitorDurationSeconds should be positive
-    if (config.ConfigData.MonitorFrequencySeconds <= 0)
+    else
     {
-      result.Errors.Add($"{ValidationFailed} MonitorFrequencySeconds must be positive.");
+      // Validate properties of BaseSensorConfig
+      // Assuming MonitorFrequencySeconds and MonitorDurationSeconds should be positive
+      if (config.ConfigData.MonitorFrequencySeconds <= 0)
+      {
+        result.Errors.Add($"{ValidationFailed} MonitorFrequencySeconds must be positive.");
+      }
     }
 
-    if (config.ConfigData.MonitorDurationSeconds <= 0)
+    if (config.ConfigData != null && config.ConfigData.MonitorDurationSeconds <= 0)
     {
       result.Errors.Add($"{ValidationFailed} MonitorDurationSeconds must be positive.");
     }
 
     // Validate Latitude (between -90 and 90)
-    if (config.ConfigData.LocationLatitude < -90.0 || config.ConfigData.LocationLatitude > 90.0)
+    if (config.ConfigData != null && (config.ConfigData.LocationLatitude < -90.0 || config.ConfigData.LocationLatitude > 90.0))
     {
       result.Errors.Add($"{ValidationFailed} LocationLatitude is out of range.");
     }
 
     // Validate Longitude (between -180 and 180)
-    if (config.ConfigData.LocationLongitude < -180.0 || config.ConfigData.LocationLongitude > 180.0)
+    if (config.ConfigData != null && (config.ConfigData.LocationLongitude < -180.0 || config.ConfigData.LocationLongitude > 180.0))
     {
       result.Errors.Add($"{ValidationFailed} LocationLongitude is out of range.");
     }

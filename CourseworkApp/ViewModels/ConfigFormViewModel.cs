@@ -41,6 +41,8 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 	[ObservableProperty]
 	private bool isActive;
 
+	private const string TempUser = "TempUser";
+
 	public ConfigFormViewModel(IConfigurationService configurationService, IValidationService validationService, INavigationService navigationService, ILoggingService loggingService, ISensorConfigurationFactory configurationFactory, ISensorHistoryService sensorHistoryService)
 			: base(navigationService, loggingService)
 	{
@@ -106,7 +108,7 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 
 		try
 		{
-			bool success = await _configurationService.UpdateConfigurationAsync(ConfigToEdit, "TempUser");
+			bool success = await _configurationService.UpdateConfigurationAsync(ConfigToEdit, TempUser);
 			if (success)
 			{
 				await _sensorHistoryService.LogActionAsync(
@@ -115,7 +117,7 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 										actionType: "Configuration Update",
 										status: "Success",
 										details: $"Configuration '{ConfigToEdit.ConfigName}' updated.",
-										performedBy: "TempUser"
+										performedBy: TempUser
 										);
 				ErrorMessage = string.Empty;
 				return true;
@@ -133,7 +135,7 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 										actionType: "Configuration Update",
 										status: "Failed",
 										details: $"Update attempt failed (service returned false). Config Name: '{ConfigToEdit.ConfigName}'.",
-										performedBy: "TempUser"
+										performedBy: TempUser
 				);
 				return false;
 			}
@@ -151,7 +153,7 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 								actionType: "Configuration Update",
 								status: "Error",
 								details: $"Exception during update attempt: {ex.Message}",
-								performedBy: "TempUser"
+								performedBy: TempUser
 			);
 			return false;
 		}
@@ -185,7 +187,7 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 
 		ValidationResult validationErrors = _validationService.ValidateConfig(ConfigToEdit);
 
-		bool isValid = !validationErrors.Errors.Any();
+		bool isValid = validationErrors.Errors.Count == 0;
 
 		if (!isValid)
 		{
@@ -208,7 +210,7 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 										actionType: "Configuration Validation",
 										status: "Validation Failed",
 										details: $"Validation failed before update attempt. Errors: {errorDetailsForDb}",
-										performedBy: "TempUser"
+										performedBy: TempUser
 										);
 			}
 			else

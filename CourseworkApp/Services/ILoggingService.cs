@@ -13,7 +13,7 @@ public enum LogLevel
 
 public interface ILoggingService
 {
-  Task LogAsync(LogLevel level, string message, Exception? exception = null, IDictionary<string, string?> properties = null);
+  Task LogAsync(LogLevel level, string message, Exception? exception = null, IDictionary<string, string?>? properties = null);
 
   Task LogInfoAsync(string message, IDictionary<string, string>? properties = null);
   Task LogWarningAsync(string message, IDictionary<string, string>? properties = null);
