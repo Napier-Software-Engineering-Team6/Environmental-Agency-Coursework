@@ -57,7 +57,7 @@ namespace CourseworkApp.Tests.Services
       NUnit.Framework.Assert.That(result.Status, Is.EqualTo(ValidationStatus.Failed));
       NUnit.Framework.Assert.That(result.Errors, Is.Not.Null);
       NUnit.Framework.Assert.That(result.Errors.Count, Is.EqualTo(1));
-      NUnit.Framework.Assert.That(result.Errors.First(), Is.EqualTo("Validation Failed: Config object is null."));
+      NUnit.Framework.Assert.That(result.Errors[0], Is.EqualTo("Validation Failed: Config object is null."));
     }
 
     [Test]
@@ -98,20 +98,13 @@ namespace CourseworkApp.Tests.Services
     {
       var config = CreateValidConfig();
       config.ConfigData = null;
-      ValidationResult result = new ValidationResult();
-      try
-      {
-        if (config.ConfigData == null)
-        {
-          result.Errors.Add("Validation Failed: ConfigData is null.");
-          result.Status = ValidationStatus.Failed;
-        }
-      }
-      catch (NullReferenceException)
-      {
-      }
 
-      NUnit.Framework.Assert.That(result.Errors, Does.Contain("Validation Failed: ConfigData is null."));
+      ValidationResult result = _validationService.ValidateConfig(config);
+
+      NUnit.Framework.Assert.That(result.Status, Is.EqualTo(ValidationStatus.Failed));
+      NUnit.Framework.Assert.That(result.Errors, Is.Not.Null);
+      NUnit.Framework.Assert.That(result.Errors.Count, Is.GreaterThanOrEqualTo(1)); // Should have at least one error
+      NUnit.Framework.Assert.That(result.Errors, Does.Contain("Validation Failed: ConfigData is null.")); // Check for the specific error message
     }
 
     [Test]
@@ -219,15 +212,6 @@ namespace CourseworkApp.Tests.Services
       NUnit.Framework.Assert.That(result.Errors, Does.Contain("Validation Failed: MonitorDurationSeconds must be positive."));
       NUnit.Framework.Assert.That(result.Errors, Does.Contain("Validation Failed: LocationLatitude is out of range."));
       NUnit.Framework.Assert.That(result.Errors, Does.Contain("Validation Failed: LocationLongitude is out of range."));
-    }
-
-    [Test]
-    public void ValidateConfig_WithNullConfigData_ThrowsNullReferenceException_DueToCurrentImplementation()
-    {
-      var config = CreateValidConfig();
-      config.ConfigData = null;
-
-      NUnit.Framework.Assert.Throws<NullReferenceException>(() => _validationService.ValidateConfig(config));
     }
   }
 }
