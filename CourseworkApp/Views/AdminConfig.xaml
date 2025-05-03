@@ -7,7 +7,6 @@
              x:Class="CourseworkApp.Views.AdminConfig"
              Title="AdminConfig"
              x:DataType="viewmodels:AdminConfigViewModel">
-
        <VerticalStackLayout
               Padding="20"
               Spacing="20"

@@ -6,7 +6,10 @@ using CourseworkApp.Services;
 using System.Windows.Input;
 
 namespace CourseworkApp.ViewModels;
-
+/// <summary>
+/// ViewModel for the AdminConfig page.
+/// This class is responsible for managing the state and behavior of the AdminConfig viwq
+/// </summary>
 public partial class AdminConfigViewModel : ObservableObject
 {
 	private readonly IConfigurationService _configurationService;
@@ -23,8 +26,15 @@ public partial class AdminConfigViewModel : ObservableObject
 
 	[ObservableProperty]
 	private bool isLoading;
-
+	/// <summary>
+	/// 
+	/// </summary>
 	public ICommand LoadDataCommand { get; }
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="configurationService"></param>
+	/// <param name="navigationService"></param>
 	public AdminConfigViewModel(IConfigurationService configurationService, INavigationService navigationService)
 	{
 		_configurationService = configurationService;
@@ -58,7 +68,11 @@ public partial class AdminConfigViewModel : ObservableObject
 			IsLoading = false;
 		}
 	}
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="configToEdit"></param>
+	/// <returns></returns>
 	[RelayCommand]
 	private async Task EditConfiguration(SensorConfigurations? configToEdit)
 	{

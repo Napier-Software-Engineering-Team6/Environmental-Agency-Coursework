@@ -12,6 +12,12 @@ namespace CourseworkApp.ViewModels;
 
 
 [QueryProperty(nameof(ConfigToEdit), "ConfigToEdit")]
+/// <summary>
+/// ViewModel for the configuration form.
+/// </summary>
+/// <remarks>
+/// This ViewModel handles the logic for displaying and editing sensor configurations.
+/// It includes properties for configuration data, validation, and saving changes.
 public partial class ConfigFormViewModel : BaseFormViewModel
 {
 	private readonly IConfigurationService _configurationService;
@@ -42,7 +48,16 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 	private bool isActive;
 
 	private const string TempUser = "TempUser";
-
+	/// <summary>
+	/// Constructor for ConfigFormViewModel.
+	/// Initializes the configuration service, validation service, and other dependencies.
+	/// </summary>
+	/// <param name="configurationService"></param>
+	/// <param name="validationService"></param>
+	/// <param name="navigationService"></param>
+	/// <param name="loggingService"></param>
+	/// <param name="configurationFactory"></param>
+	/// <param name="sensorHistoryService"></param>
 	public ConfigFormViewModel(IConfigurationService configurationService, IValidationService validationService, INavigationService navigationService, ILoggingService loggingService, ISensorConfigurationFactory configurationFactory, ISensorHistoryService sensorHistoryService)
 			: base(navigationService, loggingService)
 	{
@@ -60,6 +75,12 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 		ErrorMessage = string.Empty; // Initialize base class properties too
 		IsBusy = false;
 	}
+	/// <summary>
+	/// This method is called when the ConfigToEdit property changes.
+	/// It updates the form fields with the new configuration data.
+	/// If the value is null, it resets the fields and sets an error message.
+	/// </summary>
+	/// <param name="value"></param>
 	partial void OnConfigToEditChanged(SensorConfigurations? value)
 	{
 
@@ -87,6 +108,11 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 			IsBusy = false;
 		}
 	}
+	/// <summary>
+	/// This method is called when the user clicks the "Submit" button.
+	/// It first validates the configuration data, and if valid, it saves the changes.
+	/// It also handles logging the action and updating the UI state.
+	/// </summary>
 	protected override async Task<bool> SaveAsync()
 	{
 
@@ -158,7 +184,10 @@ public partial class ConfigFormViewModel : BaseFormViewModel
 			return false;
 		}
 	}
-
+	/// <summary>
+	/// This method validates the configuration data before saving.
+	/// It checks for null values and uses the validation service to ensure the data is correct.
+	/// If validation fails, it logs the errors and sets an error message.
 	protected override async Task<bool> ValidateAsync()
 
 	{

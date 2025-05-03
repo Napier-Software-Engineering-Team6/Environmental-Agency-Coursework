@@ -3,6 +3,10 @@ using System.Threading.Tasks;
 using CourseworkApp.Enums;
 
 namespace CourseworkApp.Services;
+/// <summary>
+/// Interface for logging service.
+/// This interface defines methods for logging messages with different severity levels and user actions.
+/// </summary>
 public enum LogLevel
 {
   Information,
@@ -10,7 +14,10 @@ public enum LogLevel
   Error,
   Debug
 }
-
+/// <summary>
+/// Interface for logging service.
+/// This interface defines methods for logging messages with different severity levels and user actions.
+/// </summary>
 public interface ILoggingService
 {
   Task LogAsync(LogLevel level, string message, Exception? exception = null, IDictionary<string, string?>? properties = null);

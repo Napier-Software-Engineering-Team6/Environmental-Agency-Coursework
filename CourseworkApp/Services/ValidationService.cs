@@ -6,10 +6,16 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace CourseworkApp.Services;
-
+/// <summary>
+/// Service for validating sensor configurations. 
+/// </summary>
 public class ValidationService : IValidationService
 {
-
+  /// <summary>
+  /// Validates the given sensor configuration.
+  /// </summary>
+  /// <param name="config"></param>
+  /// <returns></returns>
   public ValidationResult ValidateConfig(SensorConfigurations config)
   {
 
@@ -62,7 +68,7 @@ public class ValidationService : IValidationService
     }
 
     // Validate Longitude (between -180 and 180)
-    if (config.ConfigData != null && (config.ConfigData.LocationLongitude < -180.0 || config.ConfigData.LocationLongitude > 180.0))
+    if (config.ConfigData.LocationLongitude < -180.0 || config.ConfigData.LocationLongitude > 180.0)
     {
       result.Errors.Add($"{ValidationFailed} LocationLongitude is out of range.");
     }

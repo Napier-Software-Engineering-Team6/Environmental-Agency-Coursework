@@ -7,7 +7,9 @@ using CourseworkApp.Services;
 using CourseworkApp.Enums;
 
 namespace CourseworkApp.ViewModels;
-
+/// <summary>
+/// 
+/// </summary>
 public abstract partial class BaseFormViewModel : ObservableObject
 
 {
@@ -45,7 +47,10 @@ public abstract partial class BaseFormViewModel : ObservableObject
 	protected abstract Task<bool> ValidateAsync();
 	protected abstract Task<bool> SaveAsync();
 	protected abstract string GetEntityType();
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
 	[RelayCommand]
 	private async Task Submit()
 	{
@@ -89,7 +94,10 @@ public abstract partial class BaseFormViewModel : ObservableObject
 			IsBusy = false;
 		}
 	}
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
 	[RelayCommand]
 	private async Task Cancel()
 	{
