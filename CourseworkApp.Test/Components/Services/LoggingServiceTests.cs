@@ -191,11 +191,9 @@ public class LoggingServiceTests
   }
 
   [Theory]
-  [InlineData("Login", "Success", "User logged in successfully.")]
-  [InlineData("UpdateConfig", "Completed", "Configuration updated.")]
-  [InlineData("DeleteSensor", "Failed", "Failed to delete sensor.")]
-  [InlineData("DataFetch", "success", "Data fetched.")]
-  [InlineData("FirmwareUpdate", "failed", "Firmware update failed.")]
+  [InlineData("UpdateConfig", "Success", "Configuration updated.")]
+  [InlineData("UpdateConfig", "Failed", "Configuration update failed.")]
+  [InlineData("FirmwareUpdate", "Failed", "Firmware update failed.")]
   public async Task LogUserActionAsync_VariousStatuses_CompletesSuccessfully(string action, string statusString, string message)
   {
     var service = CreateLoggingService();

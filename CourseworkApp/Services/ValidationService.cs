@@ -13,7 +13,7 @@ public class ValidationService : IValidationService
   public ValidationResult ValidateConfig(SensorConfigurations config)
   {
 
-    const string ValidationFailed = "Validation Failed: ";
+    const string ValidationFailed = "Validation Failed:";
     const string ValidationSucceeded = "Validation Succeeded.";
 
     var result = new ValidationResult();  //Basic null check
