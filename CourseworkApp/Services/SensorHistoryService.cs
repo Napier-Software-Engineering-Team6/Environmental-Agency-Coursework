@@ -26,34 +26,40 @@ namespace CourseworkApp.Services
     {
       if (string.IsNullOrWhiteSpace(actionType) || string.IsNullOrWhiteSpace(status) || string.IsNullOrWhiteSpace(performedBy))
       {
-        await _loggingService?.LogWarningAsync("Attempted to log history action with missing required parameters.",
+        if (_loggingService != null)
+        {
+          await _loggingService.LogWarningAsync("Attempted to log history action with missing required parameters.",
             new Dictionary<string, string> { { "ActionType", actionType ?? "NULL" }, { "Status", status ?? "NULL" }, { "PerformedBy", performedBy ?? "NULL" } });
-        return;
-      }
+          return;
+        }
 
-      var historyEntry = new SensorConfigHistory
-      {
-        ConfigId = configId,
-        FirmwareId = firmwareId,
-        ActionType = actionType,
-        Status = status,
-        Details = details,
-        PerformedBy = performedBy,
-        Timestamp = DateTime.UtcNow
-      };
+        var historyEntry = new SensorConfigHistory
+        {
+          ConfigId = configId,
+          FirmwareId = firmwareId,
+          ActionType = actionType,
+          Status = status,
+          Details = details,
+          PerformedBy = performedBy,
+          Timestamp = DateTime.UtcNow
+        };
 
-      try
-      {
-        await using var logContext = await _dbContextFactory.CreateDbContextAsync();
-        logContext.SensorConfigHistoryDB.Add(historyEntry);
-        await logContext.SaveChangesAsync();
-      }
-      catch (Exception logEx)
-      {
-        await _loggingService?.LogErrorAsync(
-            $"CRITICAL: Failed to write action to SensorConfigHistory. ActionType: {actionType}, Status: {status}, ConfigId: {configId}, FirmwareId: {firmwareId}",
-            logEx,
-            new Dictionary<string, string> { { "User", performedBy } });
+        try
+        {
+          await using var logContext = await _dbContextFactory.CreateDbContextAsync();
+          logContext.SensorConfigHistoryDB.Add(historyEntry);
+          await logContext.SaveChangesAsync();
+        }
+        catch (Exception logEx)
+        {
+          if (_loggingService != null)
+          {
+            await _loggingService.LogErrorAsync(
+                $"CRITICAL: Failed to write action to SensorConfigHistory. ActionType: {actionType}, Status: {status}, ConfigId: {configId}, FirmwareId: {firmwareId}",
+                logEx,
+                new Dictionary<string, string> { { "User", performedBy } });
+          }
+        }
       }
     }
   }
