@@ -37,12 +37,12 @@
                 ContentTemplate="{DataTemplate views:OperationsManager}"
                 Route="OperationsManager"/>
         </Tab>
-        <Tab Title="Data Scientist"
-             Icon="data_scientist.png">
+        <Tab Title="Environmental Scientist"
+             Icon="environmental_scientist.png">
             <ShellContent
-                Title="Data Scientist"
-                ContentTemplate="{DataTemplate views:DataScientist}"
-                Route="DataScientist"/>
+                Title="Environmental Scientist"
+                ContentTemplate="{DataTemplate views:EnvironmentalScientist}"
+                Route="EnvironmentalScientist"/>
         </Tab>
     </TabBar>
 </Shell>
