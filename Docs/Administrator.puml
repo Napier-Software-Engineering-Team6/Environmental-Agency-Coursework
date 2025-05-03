@@ -43,9 +43,12 @@ package "CourseworkApp" {
         class Administrator <<View>> {
             -- Child Views --
             + AdminConfig
+            + AdminFirmware
         }
         class AdminConfig <<View>>
         class ConfigForm <<View>>
+        class AdminFirmware <<View>>
+        class FirmwareForm <<View>>
     }
 
     package "ViewModels" {
@@ -82,6 +85,25 @@ package "CourseworkApp" {
             + double LocationLongitude
             + bool IsActive
         }
+
+        class AdminFirmwareViewModel <<ViewModel>> {
+            -- Properties --
+            + ObservableCollection<FirmwareConfigurations> FirmwareVersions
+            + FirmwareConfigurations? SelectedFirmware
+            -- Methods (simplified) --
+            + LoadAllFirmwareAsync() : Task
+            + EditFirmware(FirmwareConfigurations?) : Task
+        }
+
+        class FirmwareFormViewModel <<ViewModel>> {
+            -- Properties --
+            + FirmwareConfigurations? FirmwareToEdit
+            + int FirmwareId
+            + string SensorType
+            + string FirmwareVersion
+            + DateTime ReleaseDate
+            + DateTime EndofLifeDate
+            + bool IsActive
     }
 
     package "Converters" {
@@ -118,10 +140,23 @@ package "CourseworkApp.Database" {
         
         class FirmwareConfigurations <<Model>> {
             + PK int FirmwareId
+            + required string SensorType
+            + required string FirmwareVersion
+            + required DateTime ReleaseDate
+            + required DateTime EndofLifeDate
+            + required bool IsActive
+            + required DateTime CreatedAt
         }
         
         class SensorConfigHistory <<Model>> {
             + PK int HistoryId
+            + required int SensorId -- FK
+            + int? ConfigId -- FK
+            + int? FirmwareId -- FK
+            + required string ActionType
+            + required string Details
+            + required DateTime Timestamp
+            + required string PerformedBy
         }
     }
 
@@ -151,21 +186,30 @@ package "CourseworkApp.Database" {
 MainPage --> MainPageViewModel : "binds to"
 AdminConfig --> AdminConfigViewModel : "binds to"
 ConfigForm --> ConfigFormViewModel : "binds to" 
+AdminFirmware --> AdminFirmwareViewModel : "binds to"
+FirmwareForm --> FirmwareFormViewModel : "binds to"
 
 ' Navigation structure
 AppShell --> MainPage : "navigates to"
 AppShell --> Administrator : "navigates to"
 Administrator --> AdminConfig : "contains/navigates to"
+AdminConfig --> ConfigForm : "contains/navigates to"
+Administrator --> AdminFirmware : "contains/navigates to"
+AdminFirmware --> FirmwareForm : "contains/navigates to"
 
 ' ViewModel Inheritance
 ConfigFormViewModel --|> BaseFormViewModel
+FirmwareFormViewModel --|> BaseFormViewModel
 
 ' Views using Converters
 ConfigForm ..> StringToBoolConverter : "uses"
+FirmwareForm ..> StringToBoolConverter : "uses"
 
 ' Key ViewModel/Model Relationships
 AdminConfigViewModel --* SensorConfigurations : "manages collection of"
 ConfigFormViewModel --> SensorConfigurations : "edits instance of"
+AdminFirmwareViewModel --* FirmwareConfigurations : "manages collection of"
+FirmwareFormViewModel --> FirmwareConfigurations : "edits instance of"
 
 ' DbContext Class Hierarchy
 GenericDbContext *--> Sensors : "has DbSet for"
