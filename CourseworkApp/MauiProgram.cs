@@ -36,6 +36,10 @@ public static class MauiProgram
 		builder.Services.AddSingleton<AdminFirmwareViewModel>();
 		builder.Services.AddSingleton<FirmwareFormViewModel>();
 		builder.Services.AddSingleton<FirmwareForm>();
+		builder.Services.AddSingleton<EnvironmentalScientist>();
+		builder.Services.AddSingleton<EnvironmentalScientistViewModel>();
+		builder.Services.AddSingleton<SensorMap>();
+		builder.Services.AddSingleton<SensorMapViewModel>();
 		builder.Services.AddSingleton<ISensorConfigurationFactory, SensorConfigurationFactory>();
 		builder.Services.AddSingleton<INavigationService, NavigationService>();
 		builder.Services.AddSingleton<IValidationService, ValidationService>();

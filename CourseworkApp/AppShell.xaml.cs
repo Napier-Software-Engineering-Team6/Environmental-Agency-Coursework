@@ -13,5 +13,6 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("AdminConfig/ConfigForm", typeof(ConfigForm));
 		Routing.RegisterRoute("AdminFirmware", typeof(AdminFirmware));
 		Routing.RegisterRoute("AdminFirmware/FirmwareForm", typeof(FirmwareForm));
+		Routing.RegisterRoute("SensorMap", typeof(SensorMap));
 	}
 }
