@@ -6,7 +6,6 @@
     xmlns:views="clr-namespace:CourseworkApp.Views"
     Shell.FlyoutBehavior="Disabled">
 
-
     <TabBar>
         <Tab Title="Home"
              Icon="home.png">
@@ -26,7 +25,7 @@
                 ContentTemplate="{DataTemplate views:AdminConfig}"
                 Route="AdminConfig"/>
             <!-- <ShellContent
-                Title="Firmeware"
+                Title="Firmware"
                 ContentTemplate="{DataTemplate views:AdminFirmware}"
                 Route="AdminFirmware"/> -->
         </Tab>
@@ -45,6 +44,16 @@
                 Route="EnvironmentalScientist"/>
         </Tab>
     </TabBar>
-</Shell>
 
-    
+    <!-- Standalone routes for login/role-based navigation -->
+    <ShellContent
+        Route="LoginPage"
+        ContentTemplate="{DataTemplate views:LoginPage}" />
+    <ShellContent
+        Route="AdminPage"
+        ContentTemplate="{DataTemplate views:Administrator}" />
+    <ShellContent
+        Route="HomePage"
+        ContentTemplate="{DataTemplate views:MainPage}" />
+
+</Shell>

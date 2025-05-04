@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using CourseworkApp.Database.Data;
 using CourseworkApp.ViewModels;
 using CourseworkApp.Views;
@@ -38,6 +38,10 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
 		builder.Services.AddSingleton<ILoggingService, LoggingService>();
 		builder.Services.AddSingleton<ISensorHistoryService, SensorHistoryService>();
+        builder.Services.AddSingleton<ILoginService, LoginService>();
+        builder.Services.AddTransient<LoginViewModel>();
+        builder.Services.AddTransient<LoginPage>();
+
 		builder.ConfigureSyncfusionCore();
 
 #if DEBUG
