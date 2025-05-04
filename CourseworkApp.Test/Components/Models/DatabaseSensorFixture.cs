@@ -103,7 +103,9 @@ public class DatabaseSensorFixture
     };
     _testDbContext.Add(firmwareConfig3);
 
-
+    _testDbContext.AddRange(sensorConfig1, sensorConfig2, sensorConfig3);
+    _testDbContext.AddRange(firmwareConfig1, firmwareConfig2, firmwareConfig3);
+    _testDbContext.SaveChanges();
 
     var sensorEntry1 = new Sensors()
     {
@@ -141,6 +143,9 @@ public class DatabaseSensorFixture
     sensorEntry3.CurrentFirmware = firmwareConfig3;
 
     _testDbContext.Add(sensorEntry3);
+
+    _testDbContext.AddRange(sensorEntry1, sensorEntry2, sensorEntry3);
+    _testDbContext.SaveChanges();
 
     var sensorConfigHistory1 = new SensorConfigHistory()
     {
@@ -182,6 +187,35 @@ public class DatabaseSensorFixture
     sensorConfigHistory3.Firmware = firmwareConfig3;
 
     _testDbContext.Add(sensorConfigHistory3);
+
+    _testDbContext.AddRange(sensorConfigHistory1, sensorConfigHistory2, sensorConfigHistory3);
+
+    var sensorReading1 = new SensorReadings()
+    {
+      SensorId = sensorEntry1.SensorId,
+      ConfigId = sensorConfig1.ConfigId,
+      Timestamp = DateTime.Now,
+      Value = 20.5
+    };
+    _testDbContext.Add(sensorReading1);
+
+    var sensorReading2 = new SensorReadings()
+    {
+      SensorId = sensorEntry2.SensorId,
+      ConfigId = sensorConfig2.ConfigId,
+      Timestamp = DateTime.Now,
+      Value = 20.5
+    };
+    _testDbContext.Add(sensorReading2);
+
+    var sensorReading3 = new SensorReadings()
+    {
+      SensorId = sensorEntry3.SensorId,
+      ConfigId = sensorConfig3.ConfigId,
+      Timestamp = DateTime.Now,
+      Value = 20.5
+    };
+    _testDbContext.Add(sensorReading3);
 
     _testDbContext.SaveChanges();
   }

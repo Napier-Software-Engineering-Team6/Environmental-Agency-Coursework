@@ -32,6 +32,8 @@ namespace CourseworkApp.Database.Data
     public DbSet<SensorConfigurations> SensorConfigurationsDB { get; set; }
     public DbSet<FirmwareConfigurations> FirmwareConfigurationsDB { get; set; }
     public DbSet<SensorConfigHistory> SensorConfigHistoryDB { get; set; }
+
+    public DbSet<SensorReadings> sensorReadingsDB { get; set; }
     /// <summary>
     /// OnConfiguring method is overridden to configure the database connection string.
     /// It checks for the connection string in the environment variables and if not found, it looks for it in the appsettings.json file.
@@ -126,6 +128,23 @@ namespace CourseworkApp.Database.Data
             @"(ConfigId IS NULL AND FirmwareId IS NOT NULL) OR (ConfigId IS NOT NULL AND FirmwareId IS NULL)");
         });
       });
+
+      modelBuilder.Entity<SensorReadings>(entity =>
+      {
+        entity.HasOne(reading => reading.Sensor)
+                      .WithMany()
+                      .HasForeignKey(reading => reading.SensorId)
+                      .IsRequired()
+                      .OnDelete(DeleteBehavior.Restrict);
+
+        entity.HasOne(reading => reading.Config)
+          .WithMany()
+          .HasForeignKey(reading => reading.ConfigId)
+          .IsRequired()
+          .OnDelete(DeleteBehavior.Restrict);
+      });
+
+
 
       base.OnModelCreating(modelBuilder);
     }
