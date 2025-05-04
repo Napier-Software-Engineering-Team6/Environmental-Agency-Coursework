@@ -1,0 +1,228 @@
+@startuml
+' MAUI Application Structure - Simplified Diagram (Views, ViewModels, Models, DbContext)
+' Services removed for clarity and will be added to a separate diagram
+
+' Rendering optimization settings
+skinparam dpi 100
+skinparam maxMessageSize 100
+!pragma layout smetana
+
+skinparam packageStyle rectangle
+' Styling for different components
+skinparam class<<ViewModel>> {
+  backgroundColor LightYellow
+  borderColor Gold
+}
+
+skinparam class<<View>> {
+  backgroundColor LightBlue
+  borderColor Blue
+}
+
+skinparam class<<Model>> {
+  backgroundColor LightCoral
+  borderColor Red
+}
+
+skinparam class<<DbContext>> {
+    backgroundColor LightGray
+    borderColor DarkGray
+}
+
+skinparam class<<ValueObject>> {
+    backgroundColor #FFD700
+    borderColor #B8860B
+    stereotypeFontColor #B8860B
+}
+
+' UI Components
+package "CourseworkApp" {
+    package "Views" {
+        class AppShell <<View>>
+        class MainPage <<View>>
+        class Administrator <<View>> {
+            -- Child Views --
+            + AdminConfig
+            + AdminFirmware
+        }
+        class AdminConfig <<View>>
+        class ConfigForm <<View>>
+        class AdminFirmware <<View>>
+        class FirmwareForm <<View>>
+    }
+
+    package "ViewModels" {
+        abstract class BaseFormViewModel <<ViewModel>> {
+            -- Properties --
+            + string ErrorMessage
+            + string SuccessMessage
+            + bool IsBusy
+            -- Commands --
+            + ICommand SubmitCommand
+            + ICommand CancelCommand
+            -- Methods (simplified) --
+            # ValidateAsync() : Task<bool>
+            # SaveAsync() : Task<bool>
+        }
+        
+        class MainPageViewModel <<ViewModel>>
+        
+        class AdminConfigViewModel <<ViewModel>> {
+            -- Properties --
+            + ObservableCollection<SensorConfigurations> Configurations
+            + SensorConfigurations? SelectedConfiguration
+            -- Methods (simplified) --
+            + LoadAllConfigurationsAsync() : Task
+        }
+        
+        class ConfigFormViewModel <<ViewModel>> {
+            -- Properties --
+            + SensorConfigurations? ConfigToEdit
+            + int ConfigId
+            + int MonitorFrequencySeconds
+            + int MonitorDurationSeconds
+            + double LocationLatitude
+            + double LocationLongitude
+            + bool IsActive
+        }
+
+        class AdminFirmwareViewModel <<ViewModel>> {
+            -- Properties --
+            + ObservableCollection<FirmwareConfigurations> FirmwareVersions
+            + FirmwareConfigurations? SelectedFirmware
+            -- Methods (simplified) --
+            + LoadAllFirmwareAsync() : Task
+            + EditFirmware(FirmwareConfigurations?) : Task
+        }
+
+        class FirmwareFormViewModel <<ViewModel>> {
+            -- Properties --
+            + FirmwareConfigurations? FirmwareToEdit
+            + int FirmwareId
+            + string SensorType
+            + string FirmwareVersion
+            + DateTime ReleaseDate
+            + DateTime EndofLifeDate
+            + bool IsActive
+    }
+
+    package "Converters" {
+        class StringToBoolConverter <<Converter>>
+    }
+}
+
+' Database Components
+package "CourseworkApp.Database" {
+    package "Models" {
+        class BaseSensorConfig <<ValueObject>> {
+            + required int MonitorFrequencySeconds
+            + required int MonitorDurationSeconds
+            + required double LocationLatitude
+            + required double LocationLongitude
+        }
+        
+        class SensorConfigurations <<Model>> {
+            + PK int ConfigId
+            + required string SensorType
+            + required string ConfigName
+            + required BaseSensorConfig ConfigData
+            + required DateTime CreatedAt
+            + required bool IsActive
+        }
+        
+        class Sensors <<Model>> {
+             + PK int SensorId
+             + required string SensorName
+             + required string SensorType
+             + required int CurrentConfigId -- FK
+             + required int CurrentFirmwareId -- FK
+        }
+        
+        class FirmwareConfigurations <<Model>> {
+            + PK int FirmwareId
+            + required string SensorType
+            + required string FirmwareVersion
+            + required DateTime ReleaseDate
+            + required DateTime EndofLifeDate
+            + required bool IsActive
+            + required DateTime CreatedAt
+        }
+        
+        class SensorConfigHistory <<Model>> {
+            + PK int HistoryId
+            + required int SensorId -- FK
+            + int? ConfigId -- FK
+            + int? FirmwareId -- FK
+            + required string ActionType
+            + required string Details
+            + required DateTime Timestamp
+            + required string PerformedBy
+        }
+    }
+
+    package "Data" {
+        abstract class GenericDbContext <<DbContext>> {
+            -- DbSet Properties --
+            + SensorsDB : DbSet
+            + SensorConfigurationsDB : DbSet
+            + FirmwareConfigurationsDB : DbSet
+            + SensorConfigHistoryDB : DbSet
+            -- Methods --
+            # OnConfiguring(optionsBuilder)
+            # OnModelCreating(modelBuilder)
+        }
+
+        class CourseDbContext <<DbContext>>
+        class TestDbContext <<DbContext>>
+  
+        GenericDbContext <|-- CourseDbContext
+        GenericDbContext <|-- TestDbContext
+    }
+}
+
+' Core Relationships (simplified)
+
+' Views to ViewModels
+MainPage --> MainPageViewModel : "binds to"
+AdminConfig --> AdminConfigViewModel : "binds to"
+ConfigForm --> ConfigFormViewModel : "binds to" 
+AdminFirmware --> AdminFirmwareViewModel : "binds to"
+FirmwareForm --> FirmwareFormViewModel : "binds to"
+
+' Navigation structure
+AppShell --> MainPage : "navigates to"
+AppShell --> Administrator : "navigates to"
+Administrator --> AdminConfig : "contains/navigates to"
+AdminConfig --> ConfigForm : "contains/navigates to"
+Administrator --> AdminFirmware : "contains/navigates to"
+AdminFirmware --> FirmwareForm : "contains/navigates to"
+
+' ViewModel Inheritance
+ConfigFormViewModel --|> BaseFormViewModel
+FirmwareFormViewModel --|> BaseFormViewModel
+
+' Views using Converters
+ConfigForm ..> StringToBoolConverter : "uses"
+FirmwareForm ..> StringToBoolConverter : "uses"
+
+' Key ViewModel/Model Relationships
+AdminConfigViewModel --* SensorConfigurations : "manages collection of"
+ConfigFormViewModel --> SensorConfigurations : "edits instance of"
+AdminFirmwareViewModel --* FirmwareConfigurations : "manages collection of"
+FirmwareFormViewModel --> FirmwareConfigurations : "edits instance of"
+
+' DbContext Class Hierarchy
+GenericDbContext *--> Sensors : "has DbSet for"
+GenericDbContext *--> SensorConfigurations : "has DbSet for"
+GenericDbContext *--> FirmwareConfigurations : "has DbSet for" 
+GenericDbContext *--> SensorConfigHistory : "has DbSet for"
+
+' Model Relationships
+SensorConfigurations *-- BaseSensorConfig : "has ConfigData (Owned)"
+Sensors "1" --> "1" SensorConfigurations : "CurrentConfig"
+Sensors "1" --> "1" FirmwareConfigurations : "CurrentFirmware"
+SensorConfigHistory "many" --> "1" Sensors : "Logs history for"
+SensorConfigHistory "many" --> "0..1" SensorConfigurations : "Applied Config"
+SensorConfigHistory "many" --> "0..1" FirmwareConfigurations : "Applied Firmware"
+
+@enduml
