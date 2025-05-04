@@ -1,4 +1,3 @@
-// 
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,18 +9,38 @@ using CourseworkApp.Database.Data;
 
 namespace CourseworkApp.Services;
 
+/// <summary>
+/// Service for managing firmware configurations, including retrieval, updates, and logging operations.
+/// </summary>
 public class FirmwareService : IFirmwareService
 {
-  const string UnknownUser = "Unknown";
+  /// <summary>
+  /// Default value for an unknown user.
+  /// </summary>
+  private const string UnknownUser = "Unknown";
+
   private readonly IDbContextFactory<TestDbContext> _dbContextFactory;
   private readonly ILoggingService _loggingService;
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="FirmwareService"/> class.
+  /// </summary>
+  /// <param name="dbContextFactory">Factory for creating database contexts.</param>
+  /// <param name="loggingService">Service for logging warnings, errors, and information.</param>
+  /// <exception cref="ArgumentNullException">Thrown if <paramref name="dbContextFactory"/> is null.</exception>
   public FirmwareService(IDbContextFactory<TestDbContext> dbContextFactory, ILoggingService loggingService)
   {
     _dbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
     _loggingService = loggingService;
   }
 
+  /// <summary>
+  /// Retrieves a firmware configuration by its ID.
+  /// </summary>
+  /// <param name="firmwareId">The ID of the firmware configuration to retrieve.</param>
+  /// <returns>
+  /// A task that represents the asynchronous operation. The task result contains the firmware configuration if found; otherwise, null.
+  /// </returns>
   public async Task<FirmwareConfigurations?> GetFirmwareByIdAsync(int firmwareId)
   {
     if (firmwareId <= 0)
@@ -41,6 +60,13 @@ public class FirmwareService : IFirmwareService
       return null;
     }
   }
+
+  /// <summary>
+  /// Retrieves all firmware configurations.
+  /// </summary>
+  /// <returns>
+  /// A task that represents the asynchronous operation. The task result contains a collection of all firmware configurations.
+  /// </returns>
   public async Task<IEnumerable<FirmwareConfigurations>> GetAllFirmwareAsync()
   {
     try
@@ -55,6 +81,15 @@ public class FirmwareService : IFirmwareService
       return Enumerable.Empty<FirmwareConfigurations>();
     }
   }
+
+  /// <summary>
+  /// Updates an existing firmware configuration.
+  /// </summary>
+  /// <param name="firmware">The firmware configuration to update.</param>
+  /// <param name="currentUser">The user performing the update.</param>
+  /// <returns>
+  /// A task that represents the asynchronous operation. The task result is true if the update was successful; otherwise, false.
+  /// </returns>
   public async Task<bool> UpdateFirmwareAsync(FirmwareConfigurations firmware, string currentUser)
   {
     string effectiveUser = currentUser ?? UnknownUser;
