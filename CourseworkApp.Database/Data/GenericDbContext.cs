@@ -10,6 +10,10 @@ namespace CourseworkApp.Database.Data
     {
         internal abstract string connectionName { get; set; }
 
+        public DbSet<SensorConfigurations> SensorConfigurationsDB { get; set; }
+        public DbSet<FirmwareConfigurations> FirmwareConfigurationsDB { get; set; }
+        public DbSet<SensorConfigHistory> SensorConfigHistoryDB { get; set; }
+
         public GenericDbContext()
         {
         }
@@ -57,6 +61,9 @@ namespace CourseworkApp.Database.Data
             modelBuilder.Entity<SensorModel>()
                 .Property(s => s.Status)
                 .HasConversion<string>();
+
+            // Instruct EF to ignore the base class that's not mapped to DB
+            modelBuilder.Ignore<BaseSensorConfig>();
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,0 +1,25 @@
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+
+namespace CourseworkApp.Database.Models;
+
+[Table("SensorConfigHistory")]
+[PrimaryKey(nameof(HistoryId))]
+public class SensorConfigHistory
+{
+
+  public int HistoryId { get; set; }
+  public int? ConfigId { get; set; }
+  [ForeignKey(nameof(ConfigId))]
+  public SensorConfigurations? Config { get; set; }
+  public int? FirmwareId { get; set; }
+  [ForeignKey(nameof(FirmwareId))]
+  public FirmwareConfigurations? Firmware { get; set; }
+  public required string ActionType { get; set; }
+  public required string Status { get; set; }
+  public required string Details { get; set; }
+  public required string PerformedBy { get; set; }
+  public required DateTime Timestamp { get; set; }
+}

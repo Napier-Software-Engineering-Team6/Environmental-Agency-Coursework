@@ -67,6 +67,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="../CourseworkApp.Database/CourseworkApp.Database.csproj" />
+		<ProjectReference Include="..\CourseworkApp.Migrations\CourseworkApp.Migrations.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<AssemblyAttribue Include="InternalsVisibleToAttribute">

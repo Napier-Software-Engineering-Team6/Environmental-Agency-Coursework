@@ -4,6 +4,7 @@ using CourseworkApp.Database.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseworkApp.Database.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    partial class TestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250424192759_AddSensorConfigurationTables")]
+    partial class AddSensorConfigurationTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,6 +102,9 @@ namespace CourseworkApp.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("SensorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -111,6 +117,8 @@ namespace CourseworkApp.Database.Migrations
                     b.HasIndex("ConfigId");
 
                     b.HasIndex("FirmwareId");
+
+                    b.HasIndex("SensorId");
 
                     b.ToTable("SensorConfigHistory", null, t =>
                         {
@@ -188,9 +196,17 @@ namespace CourseworkApp.Database.Migrations
                         .HasForeignKey("FirmwareId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("CourseworkApp.Database.Models.Sensors", "Sensor")
+                        .WithMany()
+                        .HasForeignKey("SensorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Config");
 
                     b.Navigation("Firmware");
+
+                    b.Navigation("Sensor");
                 });
 
             modelBuilder.Entity("CourseworkApp.Database.Models.SensorConfigurations", b =>

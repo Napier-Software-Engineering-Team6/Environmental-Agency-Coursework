@@ -40,4 +40,24 @@ desktop.ini
 secrets.json
 
 # App Settings
-CourseWorkApp.Database/appsettings.json 
+CourseWorkApp.Database/appsettings.json
+
+
+
+# Sonarquube
+.sonarqube
+
+sonar-project.properties
+
+.scannerwork
+
+.sonarlint
+
+# HTML Code
+Docs/html/
+# PDF Code
+Docs/latex
+
+out/
+
+Docs/Diagrams/
