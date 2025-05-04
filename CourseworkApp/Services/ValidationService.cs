@@ -122,7 +122,16 @@ public class ValidationService : IValidationService
     else
     {
       var versionPattern = @"^\d+\.\d+\.\d+$";
-      if (!Regex.IsMatch(firmware.FirmwareVersion, versionPattern))
+      var matchTimeout = TimeSpan.FromSeconds(1);
+
+      try
+      {
+        if (!Regex.IsMatch(firmware.FirmwareVersion, versionPattern, RegexOptions.None, matchTimeout))
+        {
+          result.Errors.Add("Validation Failed: FirmwareVersion format must be X.Y.Z (e.g., 1.0.0).");
+        }
+      }
+      catch (RegexMatchTimeoutException)
       {
         result.Errors.Add("Validation Failed: FirmwareVersion format must be X.Y.Z (e.g., 1.0.0).");
       }
