@@ -1,4 +1,5 @@
 using CourseworkApp.Database.Models;
+using CourseworkApp.Models.Enums;
 using CourseworkApp.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,8 +25,6 @@ namespace CourseworkApp.Services
         /// <summary>
         /// Retrieves all sensors, optionally using AsNoTracking to force a fresh DB query.
         /// </summary>
-        /// <param name="forceReload">If true, disables tracking to fetch updated values.</param>
-        /// <returns>A task that returns a list of all sensor models.</returns>
         public virtual Task<List<SensorModel>> GetAllSensorsAsync(bool forceReload = false)
         {
             return _sensorRepository.GetAllSensorsAsync(forceReload);
@@ -34,9 +33,7 @@ namespace CourseworkApp.Services
         /// <summary>
         /// Retrieves sensors that match a specific operational status.
         /// </summary>
-        /// <param name="status">The desired status (e.g. Active, Inactive, Malfunction).</param>
-        /// <returns>A task that returns a list of matching sensor models.</returns>
-        public virtual Task<List<SensorModel>> GetSensorsByStatusAsync(string status)
+        public virtual Task<List<SensorModel>> GetSensorsByStatusAsync(SensorStatus status)
         {
             return _sensorRepository.GetSensorsByStatusAsync(status);
         }

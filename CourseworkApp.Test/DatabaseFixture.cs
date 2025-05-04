@@ -2,6 +2,8 @@ using CourseworkApp.Database.Data;
 using CourseworkApp.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.InMemory;
+using CourseworkApp.Models.Enums;
+
 
 namespace CourseworkApp.Test
 {
@@ -34,8 +36,8 @@ namespace CourseworkApp.Test
             if (!DbContext.Sensors.Any())
             {
                 DbContext.Sensors.AddRange(
-                    new SensorModel { Id = 1, Name = "Sensor A", Location = "Hyrule", Status = "Active", LastUpdated = DateTime.Now, Type = "Air", ThresholdLow = 10, ThresholdHigh = 100 },
-                    new SensorModel { Id = 2, Name = "Sensor B", Location = "Raccoon City", Status = "Inactive", LastUpdated = DateTime.Now, Type = "Water", ThresholdLow = 5, ThresholdHigh = 50 }
+                    new SensorModel { Id = 1, Name = "Sensor A", Location = "Hyrule", Status = SensorStatus.Active, LastUpdated = DateTime.Now, Type = "Air", ThresholdLow = 10, ThresholdHigh = 100 },
+                    new SensorModel { Id = 2, Name = "Sensor B", Location = "Raccoon City", Status = SensorStatus.Inactive, LastUpdated = DateTime.Now, Type = "Water", ThresholdLow = 5, ThresholdHigh = 50 }
                 );
             }
 

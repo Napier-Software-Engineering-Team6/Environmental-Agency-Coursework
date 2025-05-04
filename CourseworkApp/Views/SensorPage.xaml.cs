@@ -1,34 +1,35 @@
+using CourseworkApp.Services;
 using CourseworkApp.ViewModels;
 
 namespace CourseworkApp.Views
 {
     /// <summary>
     /// Code-behind for SensorPage.xaml. Binds SensorViewModel to page context.
+    /// Uses IAlertService to show errors.
     /// </summary>
     public partial class SensorPage : ContentPage
     {
-        private readonly SensorViewModel _viewModel;
+        private readonly SensorViewModel viewModel;
+        private readonly IAlertService alertService;
 
-        /// <summary>
-        /// Initializes the page and assigns the SensorViewModel as the BindingContext.
-        /// </summary>
-        /// <param name="viewModel">The ViewModel injected through dependency injection.</param>
-        public SensorPage(SensorViewModel viewModel)
+        public SensorPage(SensorViewModel viewModel, IAlertService alertService)
         {
             InitializeComponent();
-            _viewModel = viewModel;
-            BindingContext = _viewModel;
+            this.viewModel = viewModel;
+            this.alertService = alertService;
+            BindingContext = viewModel;
         }
 
-        /// <summary>
-        /// Triggers automatic data loading when the page appears.
-        /// </summary>
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            // Ensure fresh data is loaded when the page appears.
-            await _viewModel.LoadSensorsAsync(forceReload: true);
+            await viewModel.LoadSensorsAsync();
+
+            if (!string.IsNullOrEmpty(viewModel.ErrorMessage))
+            {
+                await alertService.ShowAlertAsync("Error", viewModel.ErrorMessage);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 using CourseworkApp.Database.Models;
+using CourseworkApp.Models.Enums;
 using CourseworkApp.Repositories;
 using CourseworkApp.Services;
 using Moq;
@@ -34,26 +35,27 @@ namespace CourseworkApp.Test.Services
         public async Task GetSensorsByStatusAsync_ShouldReturnOnlyMatchingSensors()
         {
             // Arrange
-            var status = "Active";
+            var status = SensorStatus.Active;
+
             var expectedSensors = new List<SensorModel>
             {
-                new SensorModel { Id = 1, Name = "Sensor A", Status = "Active" },
-                new SensorModel { Id = 2, Name = "Sensor B", Status = "Active" }
+                new SensorModel { Id = 1, Name = "Sensor A", Status = SensorStatus.Active },
+                new SensorModel { Id = 2, Name = "Sensor B", Status = SensorStatus.Active }
             };
 
             _mockSensorRepository
-                .Setup(repo => repo.GetSensorsByStatusAsync(status))
+                .Setup(repo => repo.GetSensorsByStatusAsync(SensorStatus.Active))
                 .ReturnsAsync(expectedSensors);
 
             // Act
-            var actualSensors = await _sensorService.GetSensorsByStatusAsync(status);
+            var actualSensors = await _sensorService.GetSensorsByStatusAsync(SensorStatus.Active);
 
             // Assert
             Assert.Equal(expectedSensors.Count, actualSensors.Count);
             Assert.All(actualSensors, s => Assert.Equal(status, s.Status));
 
             // Verify correct repository call
-            _mockSensorRepository.Verify(repo => repo.GetSensorsByStatusAsync(status), Times.Once);
+            _mockSensorRepository.Verify(repo => repo.GetSensorsByStatusAsync(SensorStatus.Active), Times.Once);
         }
     }
 }

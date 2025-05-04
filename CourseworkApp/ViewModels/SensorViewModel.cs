@@ -1,78 +1,67 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CourseworkApp.Database.Models;
 using CourseworkApp.Services;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CourseworkApp.ViewModels
 {
     /// <summary>
     /// ViewModel for managing and displaying sensor data in the UI.
-    /// Handles loading and refreshing logic.
+    /// Handles loading, refreshing, and error messaging.
     /// </summary>
-    public class SensorViewModel : INotifyPropertyChanged
+    public partial class SensorViewModel : ObservableObject
     {
-        private readonly SensorService _sensorService;
-        public ObservableCollection<SensorModel> Sensors { get; set; } = new();
+        private readonly SensorService sensorService;
 
-        public bool IsBusy { get; set; }
-        public bool HasNoSensors => Sensors.Count == 0; //used to capture empty state in UI
+        [ObservableProperty]
+        private bool isBusy;
 
-        /// <summary>
-        /// Command to trigger sensor data refresh.
-        /// </summary>
-        public Command RefreshSensorsCommand { get; }
+        [ObservableProperty]
+        private string errorMessage;
 
-        /// <summary>
-        /// Constructor for SensorViewModel with dependency injected service.
-        /// </summary>
-        /// <param name="sensorService">Service for sensor operations.</param>
+        public ObservableCollection<SensorModel> Sensors { get; } = new();
+
+        public bool HasNoSensors => Sensors.Count == 0;
+
+        public IRelayCommand RefreshSensorsCommand { get; }
+
         public SensorViewModel(SensorService sensorService)
         {
-            _sensorService = sensorService;
-            RefreshSensorsCommand = new Command(async () => await LoadSensorsAsync(forceReload: true));
+            this.sensorService = sensorService;
+            RefreshSensorsCommand = new AsyncRelayCommand(LoadSensorsAsync);
         }
 
         /// <summary>
-        /// Loads sensor data, with optional forced reload from the database.
+        /// Loads sensor data asynchronously and updates the collection.
         /// </summary>
-        /// <param name="forceReload">Forces no-tracking context query if true.</param>
-        public async Task LoadSensorsAsync(bool forceReload = false)
+        public async Task LoadSensorsAsync(CancellationToken cancellationToken = default)
         {
             if (IsBusy) return;
 
             IsBusy = true;
+            ErrorMessage = string.Empty;
+
             try
             {
                 Sensors.Clear();
-                var sensors = await _sensorService.GetAllSensorsAsync(forceReload);
+                var sensors = await sensorService.GetAllSensorsAsync();
                 foreach (var sensor in sensors)
                 {
                     Sensors.Add(sensor);
                 }
                 OnPropertyChanged(nameof(HasNoSensors));
-                Console.WriteLine($">>> Loaded {sensors.Count} sensors.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($">>> Error loading sensors: {ex.Message}");
+                ErrorMessage = $"Error loading sensors: {ex.Message}";
             }
             finally
             {
                 IsBusy = false;
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Notifies UI of property value changes.
-        /// </summary>
-        /// <param name="propertyName">Property name to notify (optional).</param>
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

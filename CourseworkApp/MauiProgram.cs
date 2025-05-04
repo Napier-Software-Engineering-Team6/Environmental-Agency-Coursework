@@ -40,6 +40,7 @@ namespace CourseworkApp
             // Register application services and dependencies for DI
             builder.Services.AddTransient<ISensorRepository, SensorRepository>();
             builder.Services.AddTransient<SensorService>();
+            builder.Services.AddSingleton<IAlertService, AlertService>();
             builder.Services.AddTransient<SensorViewModel>();
             builder.Services.AddTransient<SensorPage>();
             builder.Services.AddTransient<MainPageViewModel>();

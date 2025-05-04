@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using CourseworkApp.Database.Models;
+using CourseworkApp.Models.Enums;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
 
@@ -48,6 +49,16 @@ namespace CourseworkApp.Database.Data
             }
 
             optionsBuilder.UseSqlServer(connectionString);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Store SensorStatus enum as strings in the database
+            modelBuilder.Entity<SensorModel>()
+                .Property(s => s.Status)
+                .HasConversion<string>();
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

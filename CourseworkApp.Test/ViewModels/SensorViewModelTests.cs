@@ -5,6 +5,8 @@ using Moq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
+using CourseworkApp.Models.Enums;
+
 
 namespace CourseworkApp.Test.ViewModels
 {
@@ -34,8 +36,8 @@ namespace CourseworkApp.Test.ViewModels
             // Arrange
             var expectedSensors = new List<SensorModel>
             {
-                new SensorModel { Id = 1, Name = "Sensor 1", Status = "Active" },
-                new SensorModel { Id = 2, Name = "Sensor 2", Status = "Inactive" }
+                new SensorModel { Id = 1, Name = "Sensor 1", Status = SensorStatus.Active },
+                new SensorModel { Id = 2, Name = "Sensor 2", Status = SensorStatus.Inactive }
             };
 
             _mockSensorService
