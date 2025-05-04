@@ -1,14 +1,27 @@
 using CourseworkApp.ViewModels;
-using Microsoft.Maui.Controls;
+using Syncfusion.Maui.Maps;
+using Microsoft.Maui.Maps; // Keep for Location type from ViewModel if used
+using System;
+using System.Collections.ObjectModel; // Needed for MapMarkerCollection potentially, though Syncfusion might have its own
 
-namespace CourseworkApp.Views;
-
-public partial class SensorMap : ContentPage
+namespace CourseworkApp.Views
 {
-	public SensorMap(SensorMapViewModel viewModel)
+	public partial class SensorMap : ContentPage
 	{
-		InitializeComponent();
-		BindingContext = viewModel;
+		readonly SensorMapViewModel _viewModel;
 
+		public SensorMap(SensorMapViewModel viewModel)
+		{
+			InitializeComponent();
+			BindingContext = viewModel;
+			_viewModel = viewModel;
+		}
+
+		protected override void OnAppearing()
+		{
+			base.OnAppearing();
+			// Initial view set in XAML's ZoomPanBehavior
+			// Add the test marker using the correct layer type
+		}
 	}
 }

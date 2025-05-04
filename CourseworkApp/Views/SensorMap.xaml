@@ -1,11 +1,34 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="CourseworkApp.Views.SensorMap">
-    <VerticalStackLayout>
-        <Label
-            Text="Sensor Map Page"
-            VerticalOptions="Center"
-            HorizontalOptions="Center"/>
-    </VerticalStackLayout>
+             xmlns:vm="clr-namespace:CourseworkApp.ViewModels"
+             xmlns:map="clr-namespace:Syncfusion.Maui.Maps;assembly=Syncfusion.Maui.Maps"
+             x:DataType="vm:SensorMapViewModel"
+             x:Class="CourseworkApp.Views.SensorMap"
+             Title="Sensor Map">
+    <Grid>
+        <map:SfMaps>
+            <map:SfMaps.Layer>
+                <map:MapTileLayer UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png">
+
+                    <map:MapTileLayer.Center>
+                        <map:MapLatLng Latitude="55"
+                                       Longitude="-2.5"/>
+                    </map:MapTileLayer.Center>
+
+                    <map:MapTileLayer.ZoomPanBehavior>
+                        <map:MapZoomPanBehavior ZoomLevel="5.5"
+                                                EnablePanning="True"
+                                                EnableZooming="True"/>
+                    </map:MapTileLayer.ZoomPanBehavior>
+
+                    <map:MapTileLayer.Markers>
+                        <map:MapMarkerCollection>
+                        </map:MapMarkerCollection>
+                    </map:MapTileLayer.Markers>
+
+                </map:MapTileLayer>
+            </map:SfMaps.Layer>
+        </map:SfMaps>
+    </Grid>
 </ContentPage>
