@@ -1,7 +1,7 @@
 @startuml Sensor Feature Structure
 
-skinparam backgroundColor #0d0d0d
-skinparam classBackgroundColor #1e1e1e
+skinparam backgroundColor grey
+skinparam classBackgroundColor grey
 skinparam classBorderColor White
 skinparam classArrowColor White
 skinparam classFontColor White
@@ -12,18 +12,26 @@ skinparam defaultTextAlignment center
 skinparam shadowing false
 
 ' Title
- title Sensor Feature - Class Relationships
+title Sensor Feature - Class Relationships
+
+package CourseworkApp.Models.Enums {
+  enum SensorStatus {
+    Active
+    Inactive
+    Malfunction
+  }
+}
 
 package CourseworkApp.Database.Models {
   class SensorModel {
     +int Id
     +string Name
     +string Location
-    +string Status
+    +SensorStatus Status
     +DateTime LastUpdated
     +string Type
-    +int ThresholdLow
-    +int ThresholdHigh
+    +double? ThresholdLow
+    +double? ThresholdHigh
   }
 }
 
@@ -36,13 +44,13 @@ package CourseworkApp.Database.Data {
 package CourseworkApp.Repositories {
   interface ISensorRepository {
     +Task<List<SensorModel>> GetAllSensorsAsync(bool forceReload = false)
-    +Task<List<SensorModel>> GetSensorsByStatusAsync(string status)
+    +Task<List<SensorModel>> GetSensorsByStatusAsync(SensorStatus status)
   }
 
   class SensorRepository {
-    -CourseDbContext _dbContext
+    -CourseDbContext dbContext
     +GetAllSensorsAsync(bool): Task<List<SensorModel>>
-    +GetSensorsByStatusAsync(string): Task<List<SensorModel>>
+    +GetSensorsByStatusAsync(SensorStatus): Task<List<SensorModel>>
   }
 
   ISensorRepository <|.. SensorRepository
@@ -51,22 +59,35 @@ package CourseworkApp.Repositories {
 
 package CourseworkApp.Services {
   class SensorService {
-    -ISensorRepository _sensorRepository
+    -ISensorRepository sensorRepository
     +GetAllSensorsAsync(bool): Task<List<SensorModel>>
-    +GetSensorsByStatusAsync(string): Task<List<SensorModel>>
+    +GetSensorsByStatusAsync(SensorStatus): Task<List<SensorModel>>
   }
 
   SensorService --> ISensorRepository
 }
 
+package CourseworkApp.Services {
+  interface IAlertService {
+    +ShowAlertAsync(string title, string message, string cancel): Task
+  }
+
+  class AlertService {
+    +ShowAlertAsync(string title, string message, string cancel): Task
+  }
+
+  IAlertService <|.. AlertService
+}
+
 package CourseworkApp.ViewModels {
   class SensorViewModel {
-    -SensorService _sensorService
+    -SensorService sensorService
     +ObservableCollection<SensorModel> Sensors
     +bool IsBusy
+    +string ErrorMessage
     +bool HasNoSensors
-    +Command RefreshSensorsCommand
-    +LoadSensorsAsync(bool): Task
+    +IRelayCommand RefreshSensorsCommand
+    +LoadSensorsAsync(): Task
   }
 
   SensorViewModel --> SensorService
@@ -74,11 +95,13 @@ package CourseworkApp.ViewModels {
 
 package CourseworkApp.Views {
   class SensorPage {
-    -SensorViewModel _viewModel
-    +SensorPage(SensorViewModel)
+    -SensorViewModel viewModel
+    -IAlertService alertService
+    +SensorPage(SensorViewModel, IAlertService)
   }
 
   SensorPage --> SensorViewModel
+  SensorPage --> IAlertService
 }
 
 @enduml
