@@ -17,5 +17,20 @@ public partial class AppShell : Shell
         {
             AdminTab.IsVisible = false;
         }
+		// Add logout toolbar item
+        var logoutItem = new ToolbarItem
+        {
+            Text = "Logout",
+            Command = new Command(Logout)
+        };
+        ToolbarItems.Add(logoutItem);
+	}
+
+	private void Logout()
+    {
+        SessionService.LoggedInUser = null;
+        Application.Current.MainPage = new AppShell(); // Reset nav stack
+        Shell.Current.GoToAsync("//LoginPage");
     }
+    
 }
