@@ -44,6 +44,14 @@
                 ContentTemplate="{DataTemplate views:EnvironmentalScientist}"
                 Route="EnvironmentalScientist"/>
         </Tab>
+        <Tab Title="Sensor Page"
+             Icon="environmental_scientist.png">
+            <ShellContent 
+                Title="Sensors"
+                ContentTemplate="{DataTemplate views:SensorPage}" 
+                Route="SensorPage" />
+
+        </Tab>
     </TabBar>
 </Shell>
 

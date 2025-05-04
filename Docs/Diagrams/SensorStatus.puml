@@ -1,0 +1,107 @@
+@startuml Sensor Feature Structure
+
+skinparam backgroundColor grey
+skinparam classBackgroundColor grey
+skinparam classBorderColor White
+skinparam classArrowColor White
+skinparam classFontColor White
+skinparam ArrowColor White
+skinparam ArrowFontColor White
+skinparam titleFontColor White
+skinparam defaultTextAlignment center
+skinparam shadowing false
+
+' Title
+title Sensor Feature - Class Relationships
+
+package CourseworkApp.Models.Enums {
+  enum SensorStatus {
+    Active
+    Inactive
+    Malfunction
+  }
+}
+
+package CourseworkApp.Database.Models {
+  class SensorModel {
+    +int Id
+    +string Name
+    +string Location
+    +SensorStatus Status
+    +DateTime LastUpdated
+    +string Type
+    +double? ThresholdLow
+    +double? ThresholdHigh
+  }
+}
+
+package CourseworkApp.Database.Data {
+  class CourseDbContext {
+    +DbSet<SensorModel> Sensors
+  }
+}
+
+package CourseworkApp.Repositories {
+  interface ISensorRepository {
+    +Task<List<SensorModel>> GetAllSensorsAsync(bool forceReload = false)
+    +Task<List<SensorModel>> GetSensorsByStatusAsync(SensorStatus status)
+  }
+
+  class SensorRepository {
+    -CourseDbContext dbContext
+    +GetAllSensorsAsync(bool): Task<List<SensorModel>>
+    +GetSensorsByStatusAsync(SensorStatus): Task<List<SensorModel>>
+  }
+
+  ISensorRepository <|.. SensorRepository
+  SensorRepository --> CourseDbContext
+}
+
+package CourseworkApp.Services {
+  class SensorService {
+    -ISensorRepository sensorRepository
+    +GetAllSensorsAsync(bool): Task<List<SensorModel>>
+    +GetSensorsByStatusAsync(SensorStatus): Task<List<SensorModel>>
+  }
+
+  SensorService --> ISensorRepository
+}
+
+package CourseworkApp.Services {
+  interface IAlertService {
+    +ShowAlertAsync(string title, string message, string cancel): Task
+  }
+
+  class AlertService {
+    +ShowAlertAsync(string title, string message, string cancel): Task
+  }
+
+  IAlertService <|.. AlertService
+}
+
+package CourseworkApp.ViewModels {
+  class SensorViewModel {
+    -SensorService sensorService
+    +ObservableCollection<SensorModel> Sensors
+    +bool IsBusy
+    +string ErrorMessage
+    +bool HasNoSensors
+    +IRelayCommand RefreshSensorsCommand
+    +LoadSensorsAsync(): Task
+  }
+
+  SensorViewModel --> SensorService
+}
+
+package CourseworkApp.Views {
+  class SensorPage {
+    -SensorViewModel viewModel
+    -IAlertService alertService
+    +SensorPage(SensorViewModel, IAlertService)
+  }
+
+  SensorPage --> SensorViewModel
+  SensorPage --> IAlertService
+}
+
+@enduml
