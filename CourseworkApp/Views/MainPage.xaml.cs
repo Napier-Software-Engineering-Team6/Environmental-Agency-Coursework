@@ -1,39 +1,46 @@
 ﻿using CourseworkApp.ViewModels;
-using System.Diagnostics; // Required for Debug.WriteLine
+using System.Diagnostics;
 
 namespace CourseworkApp.Views;
 
-
-/**
- * @brief represents the main page of the application.
- * @remarks This page is responsible for displaying the main content of the app.
- * @seealso CourseworkApp.ViewModels.MainPageViewModel
- */
+/// <summary>
+/// Represents the main page of the application.
+/// </summary>
+/// <remarks>
+/// This page is responsible for displaying the main content of the app.
+/// </remarks>
+/// <seealso cref="CourseworkApp.ViewModels.MainPageViewModel"/>
 public partial class MainPage : ContentPage
 {
-	// Store the ViewModel instance
-	private readonly MainPageViewModel _viewModel;
+    private readonly MainPageViewModel _viewModel;
 
-	public MainPage(MainPageViewModel viewModel)
-	{
-		System.Diagnostics.Debug.WriteLine(">>> MainPage Constructor: START");
-		InitializeComponent();
-		System.Diagnostics.Debug.WriteLine(">>> MainPage Constructor: AFTER InitializeComponent");
-		// Store the injected ViewModel and set BindingContext
-		_viewModel = viewModel;
-		this.BindingContext = _viewModel;
-		System.Diagnostics.Debug.WriteLine(">>> MainPage Constructor: AFTER BindingContext set");
-	}
+    // 1️⃣ Parameterless constructor for MAUI/XAML
+    public MainPage()
+    {
+        InitializeComponent();
+    }
 
-	// Override OnAppearing to trigger async initialization
-	protected override async void OnAppearing()
-	{
-		Debug.WriteLine(">>> MainPage OnAppearing: START");
-		base.OnAppearing();
-		// Call the ViewModel's initialization method
-		// Use await Task.Run if InitializeAsync is long and blocks UI,
-		// but often awaiting directly is fine if LoadDataAsync releases the UI thread.
-		await _viewModel.InitializeAsync();
-		Debug.WriteLine(">>> MainPage OnAppearing: END (after InitializeAsync)");
-	}
+    // 2️⃣ DI constructor for ViewModel injection
+    public MainPage(MainPageViewModel viewModel) : this()
+    {
+        Debug.WriteLine(">>> MainPage Constructor: START");
+        _viewModel = viewModel;
+        this.BindingContext = _viewModel;
+        Debug.WriteLine(">>> MainPage Constructor: AFTER BindingContext set");
+    }
+
+    protected override async void OnAppearing()
+    {
+        Debug.WriteLine(">>> MainPage OnAppearing: START");
+        base.OnAppearing();
+        if (_viewModel != null)
+        {
+            await _viewModel.InitializeAsync();
+            Debug.WriteLine(">>> MainPage OnAppearing: END (after InitializeAsync)");
+        }
+        else
+        {
+            Debug.WriteLine(">>> MainPage OnAppearing: ViewModel is NULL - Skipping InitializeAsync");
+        }
+    }
 }

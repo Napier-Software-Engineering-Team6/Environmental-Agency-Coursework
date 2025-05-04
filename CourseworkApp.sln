@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseworkApp.Test", "Cours
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseworkApp.Database", "CourseworkApp.Database\CourseworkApp.Database.csproj", "{8962928F-D017-4B17-A69D-A75094807DB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseworkApp.Migrations", "CourseworkApp.Migrations\CourseworkApp.Migrations.csproj", "{787FFF52-340E-4229-B039-7132BB74799A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -1,0 +1,78 @@
+@startuml
+!define Table(name) class name as "name" << (T,#ADD1B2) >>
+!define Column(name, type) name : type
+!define PkColumn(name, type) *name : type
+!define FkColumn(name, type) name : type <<FK>>
+
+hide methods
+hide stereo
+
+' Define Tables
+Table(FirmwareConfigurations) {
+  PkColumn(FirmwareId, int)
+  --
+  Column(SensorType, string)
+  Column(FirmwareVersion, string)
+  Column(FirmwareData, string)
+  Column(ReleaseDate, DateTime)
+  Column(EndofLifeDate, DateTime)
+  Column(IsActive, bool)
+}
+
+Table(SensorConfigurations) {
+  PkColumn(ConfigId, int)
+  --
+  Column(SensorType, string)
+  Column(ConfigName, string)
+  -- BaseSensorConfig fields (part of ConfigData) --
+  Column(MonitorFrequencySeconds, int)
+  Column(MonitorDurationSeconds, int)
+  Column(LocationLatitude, double)
+  Column(LocationLongitude, double)
+  --
+  Column(CreatedAt, DateTime)
+  Column(IsActive, bool)
+}
+
+Table(Sensors) {
+  PkColumn(SensorId, int)
+  --
+  FkColumn(CurrentConfigId, int)
+  FkColumn(CurrentFirmwareId, int)
+  Column(SensorName, string)
+  Column(SensorType, string)
+}
+
+Table(SensorConfigHistory) {
+  PkColumn(HistoryId, int)
+  --
+  FkColumn(SensorId, int)
+  FkColumn(ConfigId, int?)
+  FkColumn(FirmwareId, int)
+  Column(ActionType, string)
+  Column(Status, string)
+  Column(Details, string)
+  Column(PerformedBy, string)
+  Column(Timestamp, DateTime)
+}
+
+' Define Relationships
+' Cardinality: || (one or more), |o (zero or one), o{ (zero or more), }{ (one or more)
+' Based on FKs and [Required] attribute implying non-nullable FK columns
+
+' Sensors has a mandatory link to its current configuration
+SensorConfigurations ||--|| Sensors : has CurrentConfig
+
+' Sensors has a mandatory link to its current firmware
+FirmwareConfigurations ||--|| Sensors : has CurrentFirmware
+
+' SensorConfigHistory records history for a Sensor (mandatory)
+Sensors ||--|| SensorConfigHistory : history for
+
+' SensorConfigHistory may link to a specific SensorConfiguration (optional)
+SensorConfigurations ||--o{ SensorConfigHistory : applies Config
+
+' SensorConfigHistory mandatory links to a specific FirmwareConfiguration
+FirmwareConfigurations ||--|| SensorConfigHistory : applies Firmware
+
+@enduml

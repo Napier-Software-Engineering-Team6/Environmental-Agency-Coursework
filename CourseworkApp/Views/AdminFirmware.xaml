@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CourseworkApp.ViewModels"
+             xmlns:models="clr-namespace:CourseworkApp.Database.Models;assembly=CourseworkApp.Database"
+             x:Class="CourseworkApp.Views.AdminFirmware"
+             Title="AdminFirmware"
+             x:DataType="viewmodels:AdminFirmwareViewModel">
+
+    <VerticalStackLayout
+        Padding="20"
+        Spacing="20"
+        VerticalOptions="Start">
+        <Label
+            Text="Sensor Firmware"
+            FontSize="Large"
+            HorizontalOptions="Center"/>
+
+        <Grid ColumnDefinitions="80, 150, 150, 150, 150, 80, Auto"
+              ColumnSpacing="5"
+              Padding="5, 0, 5, 0">
+            <Label Grid.Column="0"
+                   Text="ID"
+                   FontAttributes="Bold"/>
+            <Label Grid.Column="1"
+                   Text="Sensor Type"
+                   FontAttributes="Bold"/>
+            <Label Grid.Column="2"
+                   Text="Version"
+                   FontAttributes="Bold"/>
+            <Label Grid.Column="3"
+                   Text="Release Date"
+                   FontAttributes="Bold"/>
+            <Label Grid.Column="4"
+                   Text="EOL Date"
+                   FontAttributes="Bold"/>
+            <Label Grid.Column="5"
+                   Text="Active"
+                   FontAttributes="Bold"/>
+            <Label Grid.Column="6"
+                   Text="Edit"
+                   FontAttributes="Bold"/>
+        </Grid>
+
+        <CollectionView ItemsSource="{Binding FirmwareVersions}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:FirmwareConfigurations">
+                    <Grid ColumnDefinitions="80, 150, 150, 150, 150, 80, Auto"
+                          ColumnSpacing="5"
+                          Padding="5, 5, 5, 5">
+                        <Label Grid.Column="0"
+                               Text="{Binding FirmwareId}"/>
+                        <Label Grid.Column="1"
+                               Text="{Binding SensorType}"/>
+                        <Label Grid.Column="2"
+                               Text="{Binding FirmwareVersion}"/>
+                        <Label Grid.Column="3"
+                               Text="{Binding ReleaseDate, StringFormat='{0:yyyy-MM-dd}'}"/>
+                        <Label Grid.Column="4"
+                               Text="{Binding EndofLifeDate, StringFormat='{0:yyyy-MM-dd}'}"/>
+                        <Label Grid.Column="5"
+                               Text="{Binding IsActive}"/>
+                        <Button Grid.Column="6"
+                                Text="Edit"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:AdminFirmwareViewModel}}, Path=EditFirmwareCommand}"
+                                CommandParameter="{Binding .}"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>

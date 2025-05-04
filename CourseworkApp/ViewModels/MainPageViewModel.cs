@@ -11,11 +11,11 @@ namespace CourseworkApp.ViewModels;
 /// <summary>
 /// ViewModel for the MainPage, responsible for handling data and business logic. 
 /// </summary>
-/// <param name="TestDbContext">The database context used for data access.</param>
+/// <param name="CourseDbContext">The database context used for data access.</param>
 public partial class MainPageViewModel : ObservableObject
 {
 
-  private readonly TestDbContext _dbContext; // can update db context here to use different db context
+  private readonly CourseDbContext _context; // can update db context here to use different db context
   private bool _isInitialized = false;
 
   [ObservableProperty]
@@ -27,10 +27,10 @@ public partial class MainPageViewModel : ObservableObject
   /// <summary>
   /// Constructor for MainPageViewModel. Initializes the database context.
   /// </summary>
-  /// <param name="dbContext"></param>
-  public MainPageViewModel(TestDbContext dbContext) //need to ensure correct db context
+  /// <param name="context">Injected CourseDbContext instance.</param>
+  public MainPageViewModel(CourseDbContext context) //need to ensure correct db context
   {
-    _dbContext = dbContext;
+    _context = context;
     Debug.WriteLine(">>> MainPageViewModel Constructor: Finished.");
   }
   /**
@@ -63,7 +63,7 @@ public partial class MainPageViewModel : ObservableObject
     try
     {
       Debug.WriteLine($">>> LoadDataAsync: Querying for id: {id}");
-      var record = await _dbContext.MainPageDB
+      var record = await _context.MainPageDB
         .FirstOrDefaultAsync(mp => mp.Id == id);
       Debug.WriteLine($">>> LoadDataAsync: Query completed for id: {id}. Record found: {record != null}");
 
