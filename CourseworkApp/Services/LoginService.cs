@@ -8,6 +8,8 @@ namespace CourseworkApp.Services
     {
         private readonly List<UserModel> _users = new()
         {
+            // Sample users for demonstration purposes
+            // In a real application, these would be stored securely in a database (DB access was proven in operations task)
             new UserModel { Username = "admin", Password = "admin123", Role = UserRole.Admin },
             new UserModel { Username = "user", Password = "user123", Role = UserRole.User }
         };

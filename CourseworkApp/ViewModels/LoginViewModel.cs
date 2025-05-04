@@ -31,16 +31,14 @@ namespace CourseworkApp.ViewModels
         [RelayCommand]
         private async Task Login()
         {
-            var user = _loginService.Authenticate(Username ?? "", Password ?? ""); //This prevents nulls from ever reaching Authenticate.
+            var user = _loginService.Authenticate(Username ?? "", Password ?? "");
 
             if (user != null)
             {
                 SessionService.LoggedInUser = user;
 
-                if (user.Role == UserRole.Admin)
-                    await Shell.Current.GoToAsync($"//AdminPage");
-                else
-                    await Shell.Current.GoToAsync($"//HomePage");
+                // Rebuild the AppShell so the correct tabs are shown
+                Application.Current.MainPage = new AppShell();
             }
             else
             {
@@ -48,5 +46,6 @@ namespace CourseworkApp.ViewModels
                 IsErrorVisible = true;
             }
         }
+
     }
 }

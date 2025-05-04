@@ -15,7 +15,8 @@
                 Route="MainPage"/>
         </Tab>
         <Tab Title="Admin"
-             Icon="admin.png">
+             Icon="admin.png"
+             x:Name="AdminTab">
             <ShellContent
                 Title="Admin"
                 ContentTemplate="{DataTemplate views:Administrator}"
