@@ -24,6 +24,8 @@
 
                     <map:MapTileLayer.Markers>
                         <map:MapMarkerCollection>
+                            <map:MapMarker Latitude="56.07"
+                                           Longitude="-3.46"/>
                         </map:MapMarkerCollection>
                     </map:MapTileLayer.Markers>
 
