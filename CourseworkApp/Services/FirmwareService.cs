@@ -12,6 +12,7 @@ namespace CourseworkApp.Services;
 
 public class FirmwareService : IFirmwareService
 {
+  const string UnknownUser = "Unknown";
   private readonly IDbContextFactory<TestDbContext> _dbContextFactory;
   private readonly ILoggingService _loggingService;
 
@@ -25,10 +26,7 @@ public class FirmwareService : IFirmwareService
   {
     if (firmwareId <= 0)
     {
-      if (_loggingService != null)
-      {
-        await _loggingService.LogWarningAsync($"Attempted to retrieve firmware with invalid ID: {firmwareId}.");
-      }
+      await _loggingService.LogWarningAsync($"Attempted to retrieve firmware with invalid ID: {firmwareId}.");
       return null;
     }
     try
@@ -38,10 +36,7 @@ public class FirmwareService : IFirmwareService
     }
     catch (Exception ex)
     {
-      if (_loggingService != null)
-      {
-        await _loggingService.LogErrorAsync($"Error retrieving firmware by ID: {firmwareId}.", ex);
-      }
+      await _loggingService.LogErrorAsync($"Error retrieving firmware by ID: {firmwareId}.", ex);
       Debug.WriteLine($"Error getting firmware ID {firmwareId}: {ex.Message}");
       return null;
     }
@@ -55,31 +50,24 @@ public class FirmwareService : IFirmwareService
     }
     catch (Exception ex)
     {
-      if (_loggingService != null)
-      {
-        await _loggingService.LogErrorAsync($"Error retrieving all firmware configurations.", ex);
-      }
+      await _loggingService.LogErrorAsync($"Error retrieving all firmware configurations.", ex);
       Debug.WriteLine($"Error getting all firmware configurations: {ex.Message}");
       return Enumerable.Empty<FirmwareConfigurations>();
     }
   }
   public async Task<bool> UpdateFirmwareAsync(FirmwareConfigurations firmware, string currentUser)
   {
+    string effectiveUser = currentUser ?? UnknownUser;
+
     if (firmware == null)
     {
-      if (_loggingService != null)
-      {
-        await _loggingService.LogWarningAsync($"Attempted to update firmware with null object.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
-      }
+      await _loggingService.LogWarningAsync($"Attempted to update firmware with null object.", new Dictionary<string, string> { { "User", effectiveUser } });
       return false;
     }
 
     if (firmware.FirmwareId <= 0)
     {
-      if (_loggingService != null)
-      {
-        await _loggingService?.LogWarningAsync($"Attempted to update firmware with invalid ID: {firmware.FirmwareId}.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
-      }
+      await _loggingService.LogWarningAsync($"Attempted to update firmware with invalid ID: {firmware.FirmwareId}.", new Dictionary<string, string> { { "User", effectiveUser } });
       return false;
     }
     try
@@ -91,7 +79,7 @@ public class FirmwareService : IFirmwareService
 
       if (existingFirmware == null)
       {
-        if (_loggingService != null) await _loggingService?.LogWarningAsync($"Firmware with ID {firmware.FirmwareId} not found for update.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+        await _loggingService.LogWarningAsync($"Firmware with ID {firmware.FirmwareId} not found for update.", new Dictionary<string, string> { { "User", effectiveUser } });
         Debug.WriteLine($"Firmware with ID {firmware.FirmwareId} not found for update.");
         return false;
       }
@@ -108,17 +96,17 @@ public class FirmwareService : IFirmwareService
 
       if (!success)
       {
-        await _loggingService?.LogWarningAsync($"Firmware update reported no changes saved for ID {firmware.FirmwareId}.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+        await _loggingService.LogWarningAsync($"Firmware update reported no changes saved for ID {firmware.FirmwareId}.", new Dictionary<string, string> { { "User", effectiveUser } });
       }
       else
       {
-        await _loggingService?.LogInfoAsync($"Firmware updated successfully (ID: {firmware.FirmwareId}).", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" }, { "FirmwareId", firmware.FirmwareId.ToString() } });
+        await _loggingService.LogInfoAsync($"Firmware updated successfully (ID: {firmware.FirmwareId}).", new Dictionary<string, string> { { "User", effectiveUser }, { "FirmwareId", firmware.FirmwareId.ToString() } });
       }
       return success;
     }
     catch (Exception ex)
     {
-      await _loggingService?.LogErrorAsync($"Error updating firmware (ID: {firmware?.FirmwareId}).", ex, new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+      await _loggingService.LogErrorAsync($"Error updating firmware (ID: {firmware?.FirmwareId}).", ex, new Dictionary<string, string> { { "User", effectiveUser } });
       Debug.WriteLine($"Error updating firmware (ID: {firmware?.FirmwareId}): {ex.Message}");
       return false;
     }
