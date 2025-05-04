@@ -94,33 +94,37 @@ public class ValidationService : IValidationService
       }
     }
   }
-
-  public List<string> ValidateFirmware(FirmwareConfigurations firmware)
+  /// <summary>
+  /// Validates the given firmware configuration.
+  /// </summary>
+  /// <param name="firmware"></param>
+  /// <returns></returns>
+  public ValidationResult ValidateFirmware(FirmwareConfigurations firmware)
   {
-    var errors = new List<string>();
+    var result = new ValidationResult();
 
     if (firmware == null)
     {
-      errors.Add("Validation failed: Firmware object is null.");
-      return errors;
+      result.Errors.Add("Validation failed: Firmware object is null.");
+      return result;
     }
 
     if (string.IsNullOrWhiteSpace(firmware.SensorType))
     {
-      errors.Add("Validation Failed: SensorType is empty.");
+      result.Errors.Add("Validation Failed: SensorType is empty.");
     }
 
 
     if (string.IsNullOrWhiteSpace(firmware.FirmwareVersion))
     {
-      errors.Add("Validation Failed: FirmwareVersion is empty.");
+      result.Errors.Add("Validation Failed: FirmwareVersion is empty.");
     }
     else
     {
       var versionPattern = @"^\d+\.\d+\.\d+$";
       if (!Regex.IsMatch(firmware.FirmwareVersion, versionPattern))
       {
-        errors.Add("Validation Failed: FirmwareVersion format must be X.Y.Z (e.g., 1.0.0).");
+        result.Errors.Add("Validation Failed: FirmwareVersion format must be X.Y.Z (e.g., 1.0.0).");
       }
     }
 
@@ -128,31 +132,31 @@ public class ValidationService : IValidationService
     // Check if dates are default/unset values
     if (firmware.ReleaseDate == DateTime.MinValue)
     {
-      errors.Add("Validation Failed: Release Date must be set.");
+      result.Errors.Add("Validation Failed: Release Date must be set.");
     }
 
     if (firmware.EndofLifeDate == DateTime.MinValue)
     {
-      errors.Add("Validation Failed: End of Life Date must be set.");
+      result.Errors.Add("Validation Failed: End of Life Date must be set.");
     }
 
     if (firmware.ReleaseDate != DateTime.MinValue && firmware.EndofLifeDate != DateTime.MinValue)
     {
       if (firmware.EndofLifeDate < firmware.ReleaseDate)
       {
-        errors.Add("Validation Failed: End of Life Date cannot be earlier than Release Date.");
+        result.Errors.Add("Validation Failed: End of Life Date cannot be earlier than Release Date.");
       }
     }
 
-    if (errors.Count == 0)
+    if (result.Errors.Count == 0)
     {
       System.Diagnostics.Debug.WriteLine("Firmware Validation Succeeded.");
     }
     else
     {
-      System.Diagnostics.Debug.WriteLine($"Firmware Validation Failed with {errors.Count} errors.");
+      System.Diagnostics.Debug.WriteLine($"Firmware Validation Failed with {result.Errors.Count} errors.");
     }
 
-    return errors;
+    return result;
   }
 }

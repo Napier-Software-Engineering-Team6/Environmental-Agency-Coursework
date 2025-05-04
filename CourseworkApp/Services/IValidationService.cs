@@ -8,6 +8,7 @@ namespace CourseworkApp.Services;
 /// </summary>
 public interface IValidationService
 {
-  List<string> ValidateConfig(SensorConfigurations config);
   ValidationResult ValidateConfig(SensorConfigurations config);
+
+  ValidationResult ValidateFirmware(FirmwareConfigurations firmware);
 }

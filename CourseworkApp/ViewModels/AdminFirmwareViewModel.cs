@@ -8,62 +8,83 @@ using System.Diagnostics; // Added for potential debugging
 
 namespace CourseworkApp.ViewModels;
 
+/// <summary>
+/// ViewModel for managing firmware in the admin interface.
+/// Provides functionality for loading, displaying, and editing firmware configurations.
+/// </summary>
 public partial class AdminFirmwareViewModel : ObservableObject
 {
-  // Renamed service dependency
   private readonly IFirmwareService _firmwareService;
   private readonly INavigationService _navigationService;
 
-  // Changed model type and renamed property
+  /// <summary>
+  /// Gets or sets the collection of firmware configurations.
+  /// </summary>
   [ObservableProperty]
   private ObservableCollection<FirmwareConfigurations> firmwareVersions;
 
-  // Changed model type and renamed property
+  /// <summary>
+  /// Gets or sets the currently selected firmware configuration.
+  /// </summary>
   [ObservableProperty]
   private FirmwareConfigurations? selectedFirmware;
 
+  /// <summary>
+  /// Gets or sets the error message to display in the UI.
+  /// </summary>
   [ObservableProperty]
   private string? errorMessage;
 
+  /// <summary>
+  /// Gets or sets a value indicating whether the ViewModel is currently loading data.
+  /// </summary>
   [ObservableProperty]
   private bool isLoading;
 
+  /// <summary>
+  /// Command to load all firmware configurations asynchronously.
+  /// </summary>
   public ICommand LoadDataCommand { get; }
 
-  // Updated constructor signature and service assignment
+  /// <summary>
+  /// Initializes a new instance of the <see cref="AdminFirmwareViewModel"/> class.
+  /// </summary>
+  /// <param name="firmwareService">Service for managing firmware operations.</param>
+  /// <param name="navigationService">Service for handling navigation.</param>
   public AdminFirmwareViewModel(IFirmwareService firmwareService, INavigationService navigationService)
   {
     _firmwareService = firmwareService;
     _navigationService = navigationService;
 
-    // Initialized with new property name and type
     firmwareVersions = new ObservableCollection<FirmwareConfigurations>();
-    selectedFirmware = null; // Renamed
+    selectedFirmware = null;
     errorMessage = string.Empty;
     IsLoading = false;
 
-    // Point LoadDataCommand to the renamed loading method
     LoadDataCommand = new AsyncRelayCommand(LoadAllFirmwareAsync);
   }
 
-  // Renamed method and updated logic to use firmware service and collection
+  /// <summary>
+  /// Loads all firmware configurations asynchronously.
+  /// Clears the current collection and populates it with data from the firmware service.
+  /// </summary>
   private async Task LoadAllFirmwareAsync()
   {
     try
     {
       IsLoading = true;
       ErrorMessage = string.Empty;
-      FirmwareVersions.Clear(); // Use the renamed collection
+      FirmwareVersions.Clear();
 
       // Call the firmware service method
       var firmwares = await _firmwareService.GetAllFirmwareAsync();
 
       foreach (var firmware in firmwares)
-        FirmwareVersions.Add(firmware); // Add to the renamed collection
+        FirmwareVersions.Add(firmware);
     }
     catch (Exception ex)
     {
-      // Updated error message
+      // Log and display an error message
       ErrorMessage = $"Failed to load firmware versions: {ex.Message}";
       // Optional: Log the full exception for debugging
       // Debug.WriteLine($"Error loading firmware: {ex}");
@@ -74,7 +95,10 @@ public partial class AdminFirmwareViewModel : ObservableObject
     }
   }
 
-  // Renamed command method, updated parameter type and navigation details
+  /// <summary>
+  /// Navigates to the firmware editing form with the selected firmware configuration.
+  /// </summary>
+  /// <param name="firmwareToEdit">The firmware configuration to edit.</param>
   [RelayCommand]
   private async Task EditFirmware(FirmwareConfigurations? firmwareToEdit)
   {
@@ -82,16 +106,15 @@ public partial class AdminFirmwareViewModel : ObservableObject
     {
       var parameters = new Dictionary<string, object?>
             {
-                // Updated parameter key and value
                 { "FirmwareToEdit", firmwareToEdit }
             };
 
-      // Updated navigation route
+      // Navigate to the firmware form
       await _navigationService.GoToAsync("///AdminFirmware/FirmwareForm", parameters);
     }
     else
     {
-      // Updated error message
+      // Display an error message if no firmware is selected
       ErrorMessage = "Please select a firmware version to edit.";
     }
   }
