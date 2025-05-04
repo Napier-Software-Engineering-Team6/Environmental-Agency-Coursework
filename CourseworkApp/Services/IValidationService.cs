@@ -9,4 +9,6 @@ namespace CourseworkApp.Services;
 public interface IValidationService
 {
   ValidationResult ValidateConfig(SensorConfigurations config);
+
+  ValidationResult ValidateFirmware(FirmwareConfigurations firmware);
 }

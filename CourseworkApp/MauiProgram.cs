@@ -32,12 +32,17 @@ public static class MauiProgram
 		builder.Services.AddSingleton<AdminConfigViewModel>();
 		builder.Services.AddSingleton<ConfigForm>();
 		builder.Services.AddSingleton<ConfigFormViewModel>();
+		builder.Services.AddSingleton<AdminFirmware>();
+		builder.Services.AddSingleton<AdminFirmwareViewModel>();
+		builder.Services.AddSingleton<FirmwareFormViewModel>();
+		builder.Services.AddSingleton<FirmwareForm>();
 		builder.Services.AddSingleton<ISensorConfigurationFactory, SensorConfigurationFactory>();
 		builder.Services.AddSingleton<INavigationService, NavigationService>();
 		builder.Services.AddSingleton<IValidationService, ValidationService>();
 		builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
 		builder.Services.AddSingleton<ILoggingService, LoggingService>();
 		builder.Services.AddSingleton<ISensorHistoryService, SensorHistoryService>();
+		builder.Services.AddSingleton<IFirmwareService, FirmwareService>();
 		builder.ConfigureSyncfusionCore();
 
 #if DEBUG

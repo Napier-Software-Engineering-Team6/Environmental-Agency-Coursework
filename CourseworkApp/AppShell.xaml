@@ -25,10 +25,10 @@
                 Title="Configurations"
                 ContentTemplate="{DataTemplate views:AdminConfig}"
                 Route="AdminConfig"/>
-            <!-- <ShellContent
+            <ShellContent
                 Title="Firmeware"
                 ContentTemplate="{DataTemplate views:AdminFirmware}"
-                Route="AdminFirmware"/> -->
+                Route="AdminFirmware"/>
         </Tab>
         <Tab Title="Operations"
              Icon="operations.png">
