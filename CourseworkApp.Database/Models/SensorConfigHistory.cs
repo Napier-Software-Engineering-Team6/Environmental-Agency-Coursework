@@ -9,9 +9,8 @@ namespace CourseworkApp.Database.Models;
 [PrimaryKey(nameof(HistoryId))]
 public class SensorConfigHistory
 {
-  [Required]
-  public int HistoryId { get; set; }
 
+  public int HistoryId { get; set; }
   public int? ConfigId { get; set; }
   [ForeignKey(nameof(ConfigId))]
   public SensorConfigurations? Config { get; set; }
@@ -19,12 +18,8 @@ public class SensorConfigHistory
   [ForeignKey(nameof(FirmwareId))]
   public FirmwareConfigurations? Firmware { get; set; }
   public required string ActionType { get; set; }
-  [Required]
   public required string Status { get; set; }
-  [Required]
   public required string Details { get; set; }
-  [Required]
   public required string PerformedBy { get; set; }
-  [Required]
   public required DateTime Timestamp { get; set; }
 }

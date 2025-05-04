@@ -7,23 +7,40 @@ using System.Text.Json;
 
 namespace CourseworkApp.Database.Data
 {
+  /// <summary>
+  /// GenericDbContext is an abstract class that inherits from DbContext.
+  /// It provides a base implementation for database contexts in the application.
+  /// It contains DbSet properties for various entities and handles the configuration of the database connection.
+  /// The OnConfiguring method is responsible for setting up the database connection string.
+  /// The OnModelCreating method is used to configure the entity relationships and constraints.
+  /// The class also defines two derived classes: CourseDbContext and TestDbContext, which specify different connection names.
+  /// </summary>
   public abstract class GenericDbContext : DbContext
   {
     internal abstract String connectionName { get; set; }
-    public GenericDbContext()
+    protected GenericDbContext()
     {
     }
 
-    public GenericDbContext(DbContextOptions options) : base(options)
+    protected GenericDbContext(DbContextOptions options) : base(options)
     {
     }
-
+    // Main Page Tables
     public DbSet<MainPage> MainPageDB { get; set; }
     // Admin Page Tables
     public DbSet<Sensors> SensorsDB { get; set; }
     public DbSet<SensorConfigurations> SensorConfigurationsDB { get; set; }
     public DbSet<FirmwareConfigurations> FirmwareConfigurationsDB { get; set; }
     public DbSet<SensorConfigHistory> SensorConfigHistoryDB { get; set; }
+    /// <summary>
+    /// OnConfiguring method is overridden to configure the database connection string.
+    /// It checks for the connection string in the environment variables and if not found, it looks for it in the appsettings.json file.
+    /// If the connection string is not found in either location, it throws an InvalidOperationException.
+    /// The connection string is used to connect to the SQL Server database.
+    /// The method also specifies the assembly for the migrations.
+    /// </summary>
+    /// <param name="optionsBuilder"></param>
+    /// <exception cref="InvalidOperationException"></exception>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
 
@@ -53,7 +70,19 @@ namespace CourseworkApp.Database.Data
           connectionString,
           m => m.MigrationsAssembly("CourseworkApp.Migrations"));
     }
-
+    /// <summary>
+    /// OnModelCreating method is overridden to configure the entity relationships and constraints.
+    /// It uses the Fluent API to define the relationships between entities and set up the database schema.
+    /// The method configures the SensorConfigurations entity to own a JSON property called ConfigData.
+    /// It also sets up the relationships between the Sensors and SensorConfigHistory entities.
+    /// The Sensors entity has foreign keys to the SensorConfigurations and FirmwareConfigurations entities.
+    /// The SensorConfigHistory entity has foreign keys to the SensorConfigurations and FirmwareConfigurations entities.
+    /// The method also defines a check constraint on the SensorConfigHistory table to ensure that either ConfigId or FirmwareId is null, but not both.
+    /// This ensures that the history records are either for a configuration or a firmware, but not both at the same time.
+    /// The method is called when the model for a context is being created.
+    /// It is used to configure the model and set up the database schema.
+    /// </summary>
+    /// <param name="modelBuilder"></param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       modelBuilder.Entity<SensorConfigurations>()
@@ -101,12 +130,20 @@ namespace CourseworkApp.Database.Data
       base.OnModelCreating(modelBuilder);
     }
   }
-
+  /// <summary>
+  /// CourseDbContext is a derived class from GenericDbContext.
+  /// It specifies the connection name for the development environment.
+  /// The connection name is used to retrieve the connection string from the environment variables or appsettings.json file.
+  /// </summary>
   public class CourseDbContext : GenericDbContext
   {
     internal override String connectionName { get; set; } = "DevelopmentConnection";
   }
-
+  /// <summary>
+  /// TestDbContext is a derived class from GenericDbContext.
+  /// It specifies the connection name for the test environment.
+  /// The connection name is used to retrieve the connection string from the environment variables or appsettings.json file.
+  /// </summary>
   public class TestDbContext : GenericDbContext
   {
     internal override String connectionName { get; set; } = "TestConnection";

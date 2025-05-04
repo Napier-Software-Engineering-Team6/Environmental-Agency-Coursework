@@ -9,17 +9,32 @@ using CourseworkApp.Database.Data;
 
 namespace CourseworkApp.Services;
 
+/// <summary>
+/// Service for managing sensor configurations in the database.
+/// </summary>
 public class ConfigurationService : IConfigurationService
 {
+  const string UnknownUser = "Unknown";
   private readonly IDbContextFactory<TestDbContext> _dbContextFactory;
   private readonly ILoggingService _loggingService;
 
+  /// <summary>
+  /// Initializes a new instance of the <see cref="ConfigurationService"/> class.
+  /// </summary>
+  /// <param name="dbContextFactory">Factory for creating database contexts.</param>
+  /// <param name="loggingService">Service for logging operations.</param>
+  /// <exception cref="ArgumentNullException">Thrown if <paramref name="dbContextFactory"/> is null.</exception>
   public ConfigurationService(IDbContextFactory<TestDbContext> dbContextFactory, ILoggingService loggingService)
   {
     _dbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
     _loggingService = loggingService;
   }
 
+  /// <summary>
+  /// Retrieves a sensor configuration by its ID.
+  /// </summary>
+  /// <param name="configId">The ID of the configuration to retrieve.</param>
+  /// <returns>The sensor configuration if found; otherwise, null.</returns>
   public async Task<SensorConfigurations?> GetConfigurationByIdAsync(int configId)
   {
     if (configId <= 0)
@@ -45,6 +60,11 @@ public class ConfigurationService : IConfigurationService
       return null;
     }
   }
+
+  /// <summary>
+  /// Retrieves all sensor configurations from the database.
+  /// </summary>
+  /// <returns>A collection of all sensor configurations.</returns>
   public async Task<IEnumerable<SensorConfigurations>> GetAllConfigurationsAsync()
   {
     try
@@ -63,47 +83,59 @@ public class ConfigurationService : IConfigurationService
     }
   }
 
-  public async Task<bool> UpdateConfigurationAsync(SensorConfigurations config, string currentUser)
+  /// <summary>
+  /// Updates an existing sensor configuration in the database.
+  /// </summary>
+  /// <param name="configuration">The configuration to update.</param>
+  /// <param name="currentUser">The user performing the update.</param>
+  /// <returns>True if the update was successful; otherwise, false.</returns>
+  public async Task<bool> UpdateConfigurationAsync(SensorConfigurations configuration, string currentUser)
   {
-    if (config == null)
+    if (configuration == null)
     {
-      if (_loggingService != null) await _loggingService.LogWarningAsync("Attempted to update null configuration.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+      if (_loggingService != null)
+      {
+        await _loggingService.LogWarningAsync("Attempted to update null configuration.", new Dictionary<string, string> { { "User", currentUser ?? UnknownUser } });
+      }
       return false;
     }
 
-    if (config.ConfigId <= 0)
+    if (configuration.ConfigId <= 0)
     {
-      if (_loggingService != null) await _loggingService.LogWarningAsync($"Attempted to update configuration with invalid ID: {config.ConfigId}.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+      if (_loggingService != null)
+      {
+        await _loggingService.LogWarningAsync($"Attempted to update configuration with invalid ID: {configuration.ConfigId}.", new Dictionary<string, string> { { "User", currentUser ?? UnknownUser } });
+      }
       return false;
     }
 
     try
     {
-
       await using var context = await _dbContextFactory.CreateDbContextAsync();
-
 
       var existingConfig = await context.SensorConfigurationsDB
         .Include(c => c.ConfigData)
-        .FirstOrDefaultAsync(c => c.ConfigId == config.ConfigId);
-
+        .FirstOrDefaultAsync(c => c.ConfigId == configuration.ConfigId);
 
       if (existingConfig == null)
       {
-        if (_loggingService != null) await _loggingService.LogWarningAsync($"Configuration with ID {config.ConfigId} not found for update.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
-        Debug.WriteLine($"Configuration with ID {config.ConfigId} not found for update.");
+        if (_loggingService != null)
+        {
+          await _loggingService.LogWarningAsync($"Configuration with ID {configuration.ConfigId} not found for update.", new Dictionary<string, string> { { "User", currentUser ?? UnknownUser } });
+          Debug.WriteLine($"Configuration with ID {configuration.ConfigId} not found for update.");
+        }
         return false;
       }
 
-      existingConfig.ConfigName = config.ConfigName;
-      existingConfig.IsActive = config.IsActive;
+      existingConfig.ConfigName = configuration.ConfigName;
+      existingConfig.IsActive = configuration.IsActive;
 
-      if (config.ConfigData != null)
+      if (configuration.ConfigData != null)
       {
-        existingConfig.ConfigData.MonitorFrequencySeconds = config.ConfigData.MonitorFrequencySeconds;
-        existingConfig.ConfigData.MonitorDurationSeconds = config.ConfigData.MonitorDurationSeconds;
-        existingConfig.ConfigData.LocationLatitude = config.ConfigData.LocationLatitude;
-        existingConfig.ConfigData.LocationLongitude = config.ConfigData.LocationLongitude;
+        existingConfig.ConfigData.MonitorFrequencySeconds = configuration.ConfigData.MonitorFrequencySeconds;
+        existingConfig.ConfigData.MonitorDurationSeconds = configuration.ConfigData.MonitorDurationSeconds;
+        existingConfig.ConfigData.LocationLatitude = configuration.ConfigData.LocationLatitude;
+        existingConfig.ConfigData.LocationLongitude = configuration.ConfigData.LocationLongitude;
       }
 
       var result = await context.SaveChangesAsync();
@@ -111,18 +143,26 @@ public class ConfigurationService : IConfigurationService
 
       if (!success)
       {
-        await _loggingService?.LogWarningAsync($"Configuration update reported no changes saved for ID {config.ConfigId}.", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
+        if (_loggingService != null)
+        {
+          await _loggingService.LogWarningAsync($"Configuration update reported no changes saved for ID {configuration.ConfigId}.", new Dictionary<string, string> { { "User", currentUser ?? UnknownUser } });
+        }
       }
       else
       {
-        await _loggingService?.LogInfoAsync($"Configuration updated successfully (ID: {config.ConfigId}).", new Dictionary<string, string> { { "User", currentUser ?? "Unknown" }, { "ConfigId", config.ConfigId.ToString() } });
+        if (_loggingService != null)
+        {
+          await _loggingService.LogInfoAsync($"Configuration updated successfully (ID: {configuration.ConfigId}).", new Dictionary<string, string> { { "User", currentUser ?? UnknownUser }, { "ConfigId", configuration.ConfigId.ToString() } });
+        }
       }
       return success;
     }
     catch (Exception ex)
     {
-      await _loggingService?.LogErrorAsync($"Error updating configuration (ID: {config?.ConfigId}).", ex, new Dictionary<string, string> { { "User", currentUser ?? "Unknown" } });
-      Debug.WriteLine($"Error updating configuration (ID: {config?.ConfigId}): {ex.Message}");
+      if (_loggingService != null)
+      {
+        await _loggingService.LogErrorAsync($"Error updating configuration (ID: {configuration.ConfigId}).", ex, new Dictionary<string, string> { { "User", currentUser ?? UnknownUser } });
+      }
       return false;
     }
   }

@@ -11,13 +11,5 @@ namespace CourseworkApp.Views;
  */
 public partial class MainPage : ContentPage
 {
-	// Store the ViewModel instance
-	private readonly MainPageViewModel _viewModel;
-
-	public MainPage(MainPageViewModel viewModel)
-	{
-
-	}
-
 
 }

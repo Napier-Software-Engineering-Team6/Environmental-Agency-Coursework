@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using CourseworkApp.Database.Data;
 using CourseworkApp.ViewModels;
 using CourseworkApp.Views;
 using CourseworkApp.Services;
 using CourseworkApp.Services.Factory;
+using Syncfusion.Maui.Core.Hosting;
 
 namespace CourseworkApp;
 
@@ -31,7 +32,6 @@ public static class MauiProgram
 		builder.Services.AddSingleton<AdminConfigViewModel>();
 		builder.Services.AddSingleton<ConfigForm>();
 		builder.Services.AddSingleton<ConfigFormViewModel>();
-		builder.Services.AddSingleton<ConfigFormViewModel>();
 		builder.Services.AddSingleton<AdminFirmware>();
 		builder.Services.AddSingleton<AdminFirmwareViewModel>();
 		builder.Services.AddSingleton<FirmwareFormViewModel>();
@@ -43,6 +43,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ILoggingService, LoggingService>();
 		builder.Services.AddSingleton<ISensorHistoryService, SensorHistoryService>();
 		builder.Services.AddSingleton<IFirmwareService, FirmwareService>();
+		builder.ConfigureSyncfusionCore();
 
 #if DEBUG
 

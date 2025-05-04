@@ -4,9 +4,12 @@ using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CourseworkApp.Services;
+using CourseworkApp.Enums;
 
 namespace CourseworkApp.ViewModels;
-
+/// <summary>
+/// 
+/// </summary>
 public abstract partial class BaseFormViewModel : ObservableObject
 
 {
@@ -28,15 +31,26 @@ public abstract partial class BaseFormViewModel : ObservableObject
 		_loggingService = loggingService;
 	}
 
-	protected async Task LogActionAsync(string action, string status, string message)
+	protected async Task LogActionAsync(string action, string statusString, string message)
+
 	{
-		await _loggingService.LogUserActionAsync(action, status, message);
+		if (Enum.TryParse<ActionStatus>(statusString, true, out ActionStatus statusEnum))
+		{
+			await _loggingService.LogUserActionAsync(action, statusEnum, message);
+		}
+		else
+		{
+			await _loggingService.LogErrorAsync($"Failed to parse ActionStatus: {statusString} for action: {action}");
+		}
 	}
 
 	protected abstract Task<bool> ValidateAsync();
 	protected abstract Task<bool> SaveAsync();
 	protected abstract string GetEntityType();
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
 	[RelayCommand]
 	private async Task Submit()
 	{
@@ -44,13 +58,16 @@ public abstract partial class BaseFormViewModel : ObservableObject
 		SuccessMessage = string.Empty;
 		IsBusy = true;
 
+		const string Failed = "Failed";
+		const string Success = "Success";
+
 
 
 		try
 		{
 			if (!await ValidateAsync())
 			{
-				await LogActionAsync(SubmitAction, "Failed", ErrorMessage);
+				await LogActionAsync(SubmitAction, Failed, ErrorMessage);
 				return;
 			}
 
@@ -58,26 +75,29 @@ public abstract partial class BaseFormViewModel : ObservableObject
 			if (result)
 			{
 				SuccessMessage = "Operation completed successfully.";
-				await LogActionAsync(SubmitAction, "Success", SuccessMessage);
+				await LogActionAsync(SubmitAction, Success, SuccessMessage);
 				await _navigationService.NavigateBackAsync();
 			}
 			else
 			{
 				ErrorMessage = "Failed to save changes.";
-				await LogActionAsync(SubmitAction, "Failed", ErrorMessage);
+				await LogActionAsync(SubmitAction, Failed, ErrorMessage);
 			}
 		}
 		catch (Exception ex)
 		{
 			ErrorMessage = $"Error: {ex.Message}";
-			await LogActionAsync(SubmitAction, "Failed", ErrorMessage);
+			await LogActionAsync(SubmitAction, Failed, ErrorMessage);
 		}
 		finally
 		{
 			IsBusy = false;
 		}
 	}
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
 	[RelayCommand]
 	private async Task Cancel()
 	{

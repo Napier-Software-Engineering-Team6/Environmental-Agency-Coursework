@@ -42,7 +42,7 @@ secrets.json
 # App Settings
 CourseWorkApp.Database/appsettings.json
 
-CourseWorkApp.Migrations/Migrations/*.cs
+
 
 # Sonarquube
 .sonarqube
