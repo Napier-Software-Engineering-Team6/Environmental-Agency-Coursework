@@ -62,8 +62,10 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
-		<PackageReference Include="Syncfusion.Maui.Charts" Version="29.1.39" />
-		<PackageReference Include="Syncfusion.Maui.Core" Version="29.1.39" />
+		<PackageReference Include="Syncfusion.Maui.Charts" Version="29.1.40" />
+		<PackageReference Include="Syncfusion.Maui.Core" Version="29.1.40" />
+		<PackageReference Include="Syncfusion.Maui.Maps" Version="29.1.40" />
+		<PackageReference Include="Microsoft.Maui.Maps" Version="8.0.100" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="../CourseworkApp.Database/CourseworkApp.Database.csproj" />

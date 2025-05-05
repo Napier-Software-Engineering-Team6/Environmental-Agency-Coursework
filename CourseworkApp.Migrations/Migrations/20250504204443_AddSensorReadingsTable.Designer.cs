@@ -4,6 +4,7 @@ using CourseworkApp.Database.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseworkApp.Database.Migrations
 {
     [DbContext(typeof(TestDbContext))]
-    partial class TestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250504204443_AddSensorReadingsTable")]
+    partial class AddSensorReadingsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -257,19 +260,19 @@ namespace CourseworkApp.Database.Migrations
 
             modelBuilder.Entity("CourseworkApp.Database.Models.SensorReadings", b =>
                 {
-                    b.HasOne("CourseworkApp.Database.Models.SensorConfigurations", "Config")
+                    b.HasOne("CourseworkApp.Database.Models.SensorConfigurations", "Configuration")
                         .WithMany()
                         .HasForeignKey("ConfigId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CourseworkApp.Database.Models.Sensors", "Sensor")
                         .WithMany()
                         .HasForeignKey("SensorId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Config");
+                    b.Navigation("Configuration");
 
                     b.Navigation("Sensor");
                 });

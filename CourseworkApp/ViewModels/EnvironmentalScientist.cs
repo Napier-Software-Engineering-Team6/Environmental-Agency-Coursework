@@ -1,10 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CourseworkApp.Services;
 using System.Collections.ObjectModel;
+using CourseworkApp.Services;
 
 namespace CourseworkApp.ViewModels
 {
     public partial class EnvironmentalScientistViewModel : ObservableObject
     {
+        private readonly INavigationService _navigationService;
+
         [ObservableProperty]
         private ObservableCollection<string> categories = new() { "Air", "Water", "Weather" };
 
@@ -44,8 +49,10 @@ namespace CourseworkApp.ViewModels
                 }
             };
 
-        public EnvironmentalScientistViewModel()
+        public EnvironmentalScientistViewModel(INavigationService navigationService)
         {
+
+            _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             // Set default category and data
             SelectedCategory = Categories.First();
             DisplayedData = mockDataByCategory[SelectedCategory];
@@ -59,6 +66,12 @@ namespace CourseworkApp.ViewModels
                 new ChartPoint { Label = "Thu", Value = 18 },
                 new ChartPoint { Label = "Fri", Value = 14 }
             };
+        }
+
+        [RelayCommand]
+        private async Task GoToMapViewAsync()
+        {
+            await _navigationService.GoToAsync("SensorMap");
         }
 
         partial void OnSelectedCategoryChanged(string value)

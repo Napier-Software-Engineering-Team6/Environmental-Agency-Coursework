@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CourseworkApp.ViewModels"
+             xmlns:map="clr-namespace:Syncfusion.Maui.Maps;assembly=Syncfusion.Maui.Maps"
+             x:DataType="vm:SensorMapViewModel"
+             x:Class="CourseworkApp.Views.SensorMap"
+             Title="Sensor Map">
+
+    <Grid RowDefinitions="Auto, *">
+        <VerticalStackLayout Grid.Row="0"
+                             Padding="10">
+            <ActivityIndicator IsVisible="{Binding IsLoading}"
+                               IsRunning="{Binding IsLoading}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                   HorizontalOptions="Center"
+                   Margin="0,5,0,0"/>
+        </VerticalStackLayout>
+
+        <map:SfMaps Grid.Row="1">
+            <map:SfMaps.Layer>
+                <map:MapTileLayer UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                  Markers="{Binding SensorMarkers}">
+
+                    <map:MapTileLayer.Center>
+                        <map:MapLatLng Latitude="55"
+                                       Longitude="-2.5"/>
+                    </map:MapTileLayer.Center>
+
+                    <map:MapTileLayer.ZoomPanBehavior>
+                        <map:MapZoomPanBehavior ZoomLevel="5.5"
+                                                EnablePanning="True"
+                                                EnableZooming="True"/>
+                    </map:MapTileLayer.ZoomPanBehavior>
+
+                    <map:MapTileLayer.MarkerTemplate>
+                        <DataTemplate>
+                            <Border Stroke="Black"
+                                    StrokeThickness="1"
+                                    HeightRequest="12"
+                                    WidthRequest="12"
+                                    StrokeShape="RoundRectangle 50"
+                                    BackgroundColor="Purple"></Border>
+                        </DataTemplate>
+                    </map:MapTileLayer.MarkerTemplate>
+
+                </map:MapTileLayer>
+            </map:SfMaps.Layer>
+        </map:SfMaps>
+    </Grid>
+</ContentPage>

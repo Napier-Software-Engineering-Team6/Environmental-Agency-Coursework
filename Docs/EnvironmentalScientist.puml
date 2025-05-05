@@ -1,0 +1,182 @@
+@startuml EnvironmentalScientistMapFeature_Refactored
+
+' --- Settings and Layout ---
+!pragma layout smetana
+skinparam packageStyle rectangle
+skinparam dpi 100
+skinparam maxMessageSize 100
+
+' --- Styling for Stereotypes ---
+skinparam class<<View>> {
+  backgroundColor LightBlue
+  borderColor Blue
+}
+skinparam class<<ViewModel>> {
+  backgroundColor LightYellow
+  borderColor Gold
+}
+skinparam class<<Model>> {
+  backgroundColor LightCoral
+  borderColor Red
+}
+skinparam class<<Shell>> {
+  backgroundColor Orange
+  borderColor DarkOrange
+}
+skinparam class<<Interface>> {
+  backgroundColor Orchid
+  borderColor Purple
+}
+skinparam class<<Data>> {
+  backgroundColor LightGoldenrodYellow
+  borderColor Goldenrod
+}
+skinparam class<<ValueObject>> {
+    backgroundColor #FFD700
+    borderColor #B8860B
+    stereotypeFontColor #B8860B
+}
+
+' --- Application Structure ---
+package "CourseworkApp" {
+
+    package "Views" {
+        class MainPage <<View>> {
+            ' BindingContext implicitly set to MainPageViewModel
+        }
+
+        class SensorMap <<View>> {
+            - readonly SensorMapViewModel _viewModel
+            + SensorMap(SensorMapViewModel viewModel)
+            # OnAppearing()
+            # OnDisappearing()
+            ' XAML binds to SensorMapViewModel properties
+            ' XAML uses Map controls (e.g., Syncfusion)
+        }
+
+        class AppShell <<Shell>> {
+            + AppShell() ' Registers Routes
+            ' Routing.RegisterRoute("SensorMap", typeof(SensorMap))
+        }
+    }
+
+    package "ViewModels" {
+        class EnvironmentalScientistViewModel <<ViewModel>> {
+            - readonly INavigationService _navigationService
+            + ObservableCollection<string> Categories
+            + string SelectedCategory
+            + ObservableCollection<Measurement> DisplayedData
+            + ObservableCollection<ChartPoint> ChartData
+            + EnvironmentalScientistViewModel(INavigationService navigationService)
+            + GoToMapViewAsync() <<RelayCommand>>
+            # OnSelectedCategoryChanged(string value)
+        }
+
+        class SensorMapViewModel <<ViewModel>> {
+            - readonly ISensorReadingService _sensorReadingService
+            - readonly ILoggingService _loggingService
+            ' - IDispatcherTimer _refreshTimer ' Timer is an external dependency, removed for structural clarity like Admin diagram
+            + ObservableCollection<object> SensorMarkers ' Changed to object to represent map markers generically
+            + bool IsLoading
+            + string ErrorMessage
+            + SensorMapViewModel(ISensorReadingService srService, ILoggingService logService)
+            + LoadDataAsync() <<RelayCommand>>
+            - UpdateMapMarkers(IEnumerable<SensorReadings> readings)
+            - InitializeTimer() ' Related to external timer
+            + StartUpdates()
+            + StopUpdates()
+        }
+
+        ' Data Transfer Objects or simple data holders used by ViewModels
+        package "DataTransfer" {
+             class Measurement <<Data>> {
+                + Date : string
+                + Value : double
+                + Detail : string
+            }
+
+            class ChartPoint <<Data>> {
+                + Label : string
+                + Value : double
+            }
+        }
+    }
+
+    package "Services" {
+        interface INavigationService <<Interface>> {
+            + GoToAsync(string route)
+        }
+        interface ISensorReadingService <<Interface>> {
+            + Task<IEnumerable<SensorReadings>> GetRecentReadingsWithLocationAsync(TimeSpan lookback)
+        }
+        interface ILoggingService <<Interface>> {
+            + Task LogInfoAsync(string message, object context)
+            + Task LogWarningAsync(string message, object context)
+            + Task LogErrorAsync(string message, Exception ex, object context)
+        }
+    }
+
+    package "Database" {
+        package "Models" {
+            class SensorReadings <<Model>> {
+                + PK int ReadingId
+                + int ConfigId ' FK to SensorConfigurations
+                + DateTime Timestamp
+                + double ReadingValue
+                + string Status  ' e.g., Normal, Alert, Offline
+                ' + Config : SensorConfigurations ' Navigation Property removed for diagram simplicity
+                ' ... other reading properties
+            }
+            class SensorConfigurations <<Model>> {
+                + PK int ConfigId
+                + string SensorType
+                + string ConfigName
+                + BaseSensorConfig ConfigData ' Owned Entity Type
+                + DateTime CreatedAt
+                + bool IsActive
+                ' ... other properties
+            }
+            class BaseSensorConfig <<ValueObject>> { 
+                 + int MonitorFrequencySeconds
+                 + int MonitorDurationSeconds
+                 + double LocationLatitude
+                 + double LocationLongitude 
+            }
+        }
+    }
+}
+
+' --- Relationships ---
+
+' View -> ViewModel (Dependency Injection / Binding Context)
+SensorMap --> SensorMapViewModel : "uses / binds to"
+MainPage --> EnvironmentalScientistViewModel : "uses / binds to (example)" ' Added for context if MainPage hosts EnvScientist view/logic
+
+' ViewModel -> Service (Dependency Injection)
+EnvironmentalScientistViewModel ..> INavigationService : "uses"
+SensorMapViewModel ..> ISensorReadingService : "uses"
+SensorMapViewModel ..> ILoggingService : "uses"
+
+' ViewModel -> Data Transfer Objects
+EnvironmentalScientistViewModel *--> Measurement : "contains"
+EnvironmentalScientistViewModel *--> ChartPoint : "contains"
+
+' ViewModel -> Model / Data Structures
+SensorMapViewModel ..> SensorReadings : "loads"
+SensorMapViewModel *--> "ObservableCollection<object>" : "owns/updates SensorMarkers" ' Updated type to object
+
+' Model Relationships (Simplified from DBContext/EF Core configuration)
+SensorReadings "many" --> "1" SensorConfigurations : "relates to configuration"
+SensorConfigurations *-- BaseSensorConfig : "has ConfigData (Owned)"
+
+
+' Routing & Navigation
+AppShell --> SensorMap : "routes to"
+EnvironmentalScientistViewModel -> INavigationService : "initiates navigation"
+
+' Implicit relationships (not drawn for clarity like Admin diagram):
+' - SensorMap uses Map controls (External Lib)
+' - SensorMapViewModel might use Timer (External Lib)
+' - ViewModels inherit from ObservableObject (External Lib)
+
+@enduml

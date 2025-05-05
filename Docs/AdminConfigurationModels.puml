@@ -1,11 +1,14 @@
 @startuml
 !define Table(name) class name as "name" << (T,#ADD1B2) >>
 !define Column(name, type) name : type
-!define PkColumn(name, type) *name : type
+!define NullableColumn(name, type) name : type <<nullable>>
+!define PkColumn(name, type) *name : type <<PK>>
 !define FkColumn(name, type) name : type <<FK>>
+!define NullableFkColumn(name, type) name : type <<FK>><<nullable>>
 
 hide methods
 hide stereo
+skinparam classAttributeIconSize 0 ' Hide default icons for attributes
 
 ' Define Tables
 Table(FirmwareConfigurations) {
@@ -47,8 +50,8 @@ Table(SensorConfigHistory) {
   PkColumn(HistoryId, int)
   --
   FkColumn(SensorId, int)
-  FkColumn(ConfigId, int?)
-  FkColumn(FirmwareId, int)
+  NullableFkColumn(ConfigId, int?)
+  NullableFkColumn(FirmwareId, int)
   Column(ActionType, string)
   Column(Status, string)
   Column(Details, string)
@@ -56,23 +59,49 @@ Table(SensorConfigHistory) {
   Column(Timestamp, DateTime)
 }
 
-' Define Relationships
-' Cardinality: || (one or more), |o (zero or one), o{ (zero or more), }{ (one or more)
-' Based on FKs and [Required] attribute implying non-nullable FK columns
+Table(SensorReadings) {
+  PkColumn(ReadingId, long)
+  --
+  FkColumn(SensorId, int)
+  FkColumn(ConfigId, int)
+  Column(Timestamp, DateTime)
+  Column(Value, double)
+}
 
-' Sensors has a mandatory link to its current configuration
-SensorConfigurations ||--|| Sensors : has CurrentConfig
+' --- Sensor Relationships ---
+' A Sensor MUST have one current SensorConfiguration
+SensorConfigurations ||--|{ Sensors : CurrentConfig
+' A Sensor MUST have one current FirmwareConfiguration
+FirmwareConfigurations ||--|{ Sensors : CurrentFirmware
+' A Sensor can have zero or more SensorReadings
+Sensors ||--o{ SensorReadings : has readings
+' A Sensor can have zero or more SensorConfigHistory entries
+Sensors ||--o{ SensorConfigHistory : has history for
 
-' Sensors has a mandatory link to its current firmware
-FirmwareConfigurations ||--|| Sensors : has CurrentFirmware
+' --- SensorConfiguration Relationships ---
+' A SensorConfiguration can be the current config for zero or more Sensors
+' (Already defined via Sensors relationship)
+' A SensorConfiguration can be associated with zero or more SensorReadings
+SensorConfigurations ||--o{ SensorReadings : applies config
+' A SensorConfiguration *may* be associated with zero or more SensorConfigHistory entries (if FirmwareId is null)
+SensorConfigurations |o--o{ SensorConfigHistory : relates to config history
 
-' SensorConfigHistory records history for a Sensor (mandatory)
-Sensors ||--|| SensorConfigHistory : history for
+' --- FirmwareConfiguration Relationships ---
+' A FirmwareConfiguration can be the current firmware for zero or more Sensors
+' (Already defined via Sensors relationship)
+' A FirmwareConfiguration *may* be associated with zero or more SensorConfigHistory entries (if ConfigId is null)
+FirmwareConfigurations |o--o{ SensorConfigHistory : relates to firmware history
 
-' SensorConfigHistory may link to a specific SensorConfiguration (optional)
-SensorConfigurations ||--o{ SensorConfigHistory : applies Config
+' --- SensorReading Relationships ---
+' A SensorReading MUST belong to exactly one Sensor
+' (Already defined via Sensors relationship)
+' A SensorReading MUST belong to exactly one SensorConfiguration (the one active at the time of reading)
+' (Already defined via SensorConfigurations relationship)
 
-' SensorConfigHistory mandatory links to a specific FirmwareConfiguration
-FirmwareConfigurations ||--|| SensorConfigHistory : applies Firmware
+' --- SensorConfigHistory Relationships ---
+' A SensorConfigHistory MUST belong to exactly one Sensor
+' (Already defined via Sensors relationship)
+' A SensorConfigHistory MUST relate to EITHER a SensorConfiguration OR a FirmwareConfiguration (due to CHECK constraint)
+' (Relationships defined above reflect the 'may' aspect for each individually)
 
 @enduml
