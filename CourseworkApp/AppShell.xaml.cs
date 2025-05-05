@@ -1,7 +1,5 @@
-﻿using CourseworkApp.Views; // Ensure this namespace is correct and matches the location of AdminConfigPage
-
 namespace CourseworkApp;
-
+using CourseworkApp.Views;
 
 public partial class AppShell : Shell
 {
