@@ -1,193 +1,182 @@
-@startuml EnvironmentalScientistMapFeature
+@startuml EnvironmentalScientistMapFeature_Refactored
 
-' --- Settings for better readability ---
-skinparam classAttributeIconSize 0
-hide empty members
-skinparam linetype ortho
+' --- Settings and Layout ---
+!pragma layout smetana
+skinparam packageStyle rectangle
+skinparam dpi 100
+skinparam maxMessageSize 100
 
-' --- Namespaces ---
-package CourseworkApp.Views {
-    class MainPage <<(V,LightBlue) View>> extends ContentPage {
-        ' BindingContext implicitly set to MainPageViewModel
-    }
-
-    class SensorMap <<(V,LightBlue) View>> extends ContentPage {
-        - readonly SensorMapViewModel _viewModel
-        + SensorMap(SensorMapViewModel viewModel)
-        # OnAppearing()
-        # OnDisappearing()
-        ' XAML binds to SensorMapViewModel properties (IsLoading, ErrorMessage, SensorMarkers)
-        ' XAML uses Syncfusion.Maui.Maps controls
-    }
-
-    class AppShell <<(S,Orange) Shell>> extends Shell {
-        + AppShell() ' Registers Routes
-        ' Routing.RegisterRoute("SensorMap", typeof(SensorMap))
-    }
+' --- Styling for Stereotypes ---
+skinparam class<<View>> {
+  backgroundColor LightBlue
+  borderColor Blue
+}
+skinparam class<<ViewModel>> {
+  backgroundColor LightYellow
+  borderColor Gold
+}
+skinparam class<<Model>> {
+  backgroundColor LightCoral
+  borderColor Red
+}
+skinparam class<<Shell>> {
+  backgroundColor Orange
+  borderColor DarkOrange
+}
+skinparam class<<Interface>> {
+  backgroundColor Orchid
+  borderColor Purple
+}
+skinparam class<<Data>> {
+  backgroundColor LightGoldenrodYellow
+  borderColor Goldenrod
+}
+skinparam class<<ValueObject>> {
+    backgroundColor #FFD700
+    borderColor #B8860B
+    stereotypeFontColor #B8860B
 }
 
-package CourseworkApp.ViewModels {
-    class EnvironmentalScientistViewModel <<(VM,LightGreen) ViewModel>> extends ObservableObject {
-        - readonly INavigationService _navigationService
-        + ObservableCollection<string> Categories
-        + string SelectedCategory
-        + ObservableCollection<Measurement> DisplayedData
-        + ObservableCollection<ChartPoint> ChartData
-        + EnvironmentalScientistViewModel(INavigationService navigationService)
-        + GoToMapViewAsync() <<RelayCommand>>
-        # OnSelectedCategoryChanged(string value)
+' --- Application Structure ---
+package "CourseworkApp" {
+
+    package "Views" {
+        class MainPage <<View>> {
+            ' BindingContext implicitly set to MainPageViewModel
+        }
+
+        class SensorMap <<View>> {
+            - readonly SensorMapViewModel _viewModel
+            + SensorMap(SensorMapViewModel viewModel)
+            # OnAppearing()
+            # OnDisappearing()
+            ' XAML binds to SensorMapViewModel properties
+            ' XAML uses Map controls (e.g., Syncfusion)
+        }
+
+        class AppShell <<Shell>> {
+            + AppShell() ' Registers Routes
+            ' Routing.RegisterRoute("SensorMap", typeof(SensorMap))
+        }
     }
 
-    class SensorMapViewModel <<(VM,LightGreen) ViewModel>> extends ObservableObject {
-        - readonly ISensorReadingService _sensorReadingService
-        - readonly ILoggingService _loggingService
-        - IDispatcherTimer _refreshTimer
-        + ObservableCollection<MapMarker> SensorMarkers
-        + bool IsLoading
-        + string ErrorMessage
-        + SensorMapViewModel(ISensorReadingService srService, ILoggingService logService)
-        + LoadDataAsync() <<RelayCommand>>
-        - UpdateMapMarkers(IEnumerable<SensorReadings> readings)
-        - InitializeTimer()
-        + StartUpdates()
-        + StopUpdates()
+    package "ViewModels" {
+        class EnvironmentalScientistViewModel <<ViewModel>> {
+            - readonly INavigationService _navigationService
+            + ObservableCollection<string> Categories
+            + string SelectedCategory
+            + ObservableCollection<Measurement> DisplayedData
+            + ObservableCollection<ChartPoint> ChartData
+            + EnvironmentalScientistViewModel(INavigationService navigationService)
+            + GoToMapViewAsync() <<RelayCommand>>
+            # OnSelectedCategoryChanged(string value)
+        }
+
+        class SensorMapViewModel <<ViewModel>> {
+            - readonly ISensorReadingService _sensorReadingService
+            - readonly ILoggingService _loggingService
+            ' - IDispatcherTimer _refreshTimer ' Timer is an external dependency, removed for structural clarity like Admin diagram
+            + ObservableCollection<object> SensorMarkers ' Changed to object to represent map markers generically
+            + bool IsLoading
+            + string ErrorMessage
+            + SensorMapViewModel(ISensorReadingService srService, ILoggingService logService)
+            + LoadDataAsync() <<RelayCommand>>
+            - UpdateMapMarkers(IEnumerable<SensorReadings> readings)
+            - InitializeTimer() ' Related to external timer
+            + StartUpdates()
+            + StopUpdates()
+        }
+
+        ' Data Transfer Objects or simple data holders used by ViewModels
+        package "DataTransfer" {
+             class Measurement <<Data>> {
+                + Date : string
+                + Value : double
+                + Detail : string
+            }
+
+            class ChartPoint <<Data>> {
+                + Label : string
+                + Value : double
+            }
+        }
     }
 
-    class Measurement <<(D,Yellow) Data>> {
-      + Date : string
-      + Value : double
-      + Detail : string
+    package "Services" {
+        interface INavigationService <<Interface>> {
+            + GoToAsync(string route)
+        }
+        interface ISensorReadingService <<Interface>> {
+            + Task<IEnumerable<SensorReadings>> GetRecentReadingsWithLocationAsync(TimeSpan lookback)
+        }
+        interface ILoggingService <<Interface>> {
+            + Task LogInfoAsync(string message, object context)
+            + Task LogWarningAsync(string message, object context)
+            + Task LogErrorAsync(string message, Exception ex, object context)
+        }
     }
 
-    class ChartPoint <<(D,Yellow) Data>> {
-      + Label : string
-      + Value : double
-    }
-}
-
-package CourseworkApp.Services {
-    interface INavigationService <<(I,Orchid) Interface>> {
-        + GoToAsync(string route)
-    }
-    interface ISensorReadingService <<(I,Orchid) Interface>> {
-        + Task<IEnumerable<SensorReadings>> GetRecentReadingsWithLocationAsync(TimeSpan lookback)
-    }
-    interface ILoggingService <<(I,Orchid) Interface>> {
-        + Task LogInfoAsync(string message, object context)
-        + Task LogWarningAsync(string message, object context)
-        + Task LogErrorAsync(string message, Exception ex, object context)
-    }
-}
-
-package CourseworkApp.Database.Models {
-    class SensorReadings <<(M,LightCoral) Model>> {
-        + ReadingId : int
-        + Config : SensorConfigurations ' Navigation Property
-        ' ... other properties
-    }
-    class SensorConfigurations <<(M,LightCoral) Model>> {
-        + ConfigId : int
-        + ConfigData : ConfigDataType ' Owned Entity (JSON)
-        ' ... other properties
-    }
-    class ConfigDataType {
-        + LocationLatitude : double  
-        + LocationLongitude : double 
-        ' ... other config properties
-    }
-}
-
-package Microsoft.Maui.Controls {
-    abstract class ContentPage <<External>>
-    abstract class Shell <<External>>
-}
-
-package CommunityToolkit.Mvvm.ComponentModel {
-    abstract class ObservableObject <<External>>
-}
-
-package Syncfusion.Maui.Maps {
-    class MapMarker <<External>> {
-        + Latitude : double
-        + Longitude : double
-        + BindingContext : object
-    }
-    class SfMaps <<External>>
-    class MapTileLayer <<External>>
-}
-
-package Microsoft.Maui.Dispatching {
-    interface IDispatcherTimer <<External>> {
-        + Interval : TimeSpan
-        + {event} Tick : EventHandler<EventArgs>
-        + Start() : void
-        + Stop() : void
+    package "Database" {
+        package "Models" {
+            class SensorReadings <<Model>> {
+                + PK int ReadingId
+                + int ConfigId ' FK to SensorConfigurations
+                + DateTime Timestamp
+                + double ReadingValue
+                + string Status  ' e.g., Normal, Alert, Offline
+                ' + Config : SensorConfigurations ' Navigation Property removed for diagram simplicity
+                ' ... other reading properties
+            }
+            class SensorConfigurations <<Model>> {
+                + PK int ConfigId
+                + string SensorType
+                + string ConfigName
+                + BaseSensorConfig ConfigData ' Owned Entity Type
+                + DateTime CreatedAt
+                + bool IsActive
+                ' ... other properties
+            }
+            class BaseSensorConfig <<ValueObject>> { 
+                 + int MonitorFrequencySeconds
+                 + int MonitorDurationSeconds
+                 + double LocationLatitude
+                 + double LocationLongitude 
+            }
+        }
     }
 }
 
 ' --- Relationships ---
 
 ' View -> ViewModel (Dependency Injection / Binding Context)
-SensorMap --> SensorMapViewModel : uses/binds to
-EnvironmentalScientistViewModel --> Measurement : contains >
-EnvironmentalScientistViewModel --> ChartPoint : contains >
+SensorMap --> SensorMapViewModel : "uses / binds to"
+MainPage --> EnvironmentalScientistViewModel : "uses / binds to (example)" ' Added for context if MainPage hosts EnvScientist view/logic
 
 ' ViewModel -> Service (Dependency Injection)
-EnvironmentalScientistViewModel ..> INavigationService : uses
-SensorMapViewModel ..> ISensorReadingService : uses
-SensorMapViewModel ..> ILoggingService : uses
+EnvironmentalScientistViewModel ..> INavigationService : "uses"
+SensorMapViewModel ..> ISensorReadingService : "uses"
+SensorMapViewModel ..> ILoggingService : "uses"
 
-' ViewModel -> Model / External Data Structures
-SensorMapViewModel ..> SensorReadings : loads
-SensorMapViewModel *--> "ObservableCollection<MapMarker>" : owns/updates
-SensorMapViewModel ..> IDispatcherTimer : uses
+' ViewModel -> Data Transfer Objects
+EnvironmentalScientistViewModel *--> Measurement : "contains"
+EnvironmentalScientistViewModel *--> ChartPoint : "contains"
 
-' View -> External Libraries
-SensorMap ..> SfMaps : uses
-SensorMap ..> MapTileLayer : uses
-SensorMap ..> MapMarker : template uses
+' ViewModel -> Model / Data Structures
+SensorMapViewModel ..> SensorReadings : "loads"
+SensorMapViewModel *--> "ObservableCollection<object>" : "owns/updates SensorMarkers" ' Updated type to object
 
-' Model Relationships (Simplified from DBContext)
-SensorReadings --> SensorConfigurations : has one > Config
-
-' Routing
-AppShell ..> SensorMap : routes to
-
-' Navigation Flow (Conceptual)
-EnvironmentalScientistViewModel -> INavigationService : initiates navigation >
-note on link
-  via GoToMapViewAsync() command,
-  typically triggered by a Button
-  in an EnvironmentalScientistView (not shown)
-end note
-
-INavigationService -> AppShell : resolves route >
-note on link
-  The implementation of INavigationService
-  (likely using Shell.Current.GoToAsync)
-  interacts with AppShell's routing.
-end note
+' Model Relationships (Simplified from DBContext/EF Core configuration)
+SensorReadings "many" --> "1" SensorConfigurations : "relates to configuration"
+SensorConfigurations *-- BaseSensorConfig : "has ConfigData (Owned)"
 
 
-' Notes
-note right of EnvironmentalScientistViewModel
-  Acts as a higher-level VM for the scientist,
-  can navigate to more specific views like the map.
-end note
+' Routing & Navigation
+AppShell --> SensorMap : "routes to"
+EnvironmentalScientistViewModel -> INavigationService : "initiates navigation"
 
-note right of SensorMapViewModel
-  Handles the logic specifically for the Sensor Map View:
-  - Fetching data via ISensorReadingService
-  - Transforming data into MapMarkers
-  - Managing UI state (IsLoading, ErrorMessage)
-  - Handling auto-refresh via IDispatcherTimer
-end note
-
-note left of SensorMap
-  Displays the map using Syncfusion controls.
-  Data is bound from SensorMapViewModel.
-  Handles view lifecycle (OnAppearing/OnDisappearing)
-  to start/stop ViewModel updates.
-end note
+' Implicit relationships (not drawn for clarity like Admin diagram):
+' - SensorMap uses Map controls (External Lib)
+' - SensorMapViewModel might use Timer (External Lib)
+' - ViewModels inherit from ObservableObject (External Lib)
 
 @enduml
