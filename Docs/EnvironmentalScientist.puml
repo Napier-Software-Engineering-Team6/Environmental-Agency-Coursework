@@ -1,0 +1,193 @@
+@startuml EnvironmentalScientistMapFeature
+
+' --- Settings for better readability ---
+skinparam classAttributeIconSize 0
+hide empty members
+skinparam linetype ortho
+
+' --- Namespaces ---
+package CourseworkApp.Views {
+    class MainPage <<(V,LightBlue) View>> extends ContentPage {
+        ' BindingContext implicitly set to MainPageViewModel
+    }
+
+    class SensorMap <<(V,LightBlue) View>> extends ContentPage {
+        - readonly SensorMapViewModel _viewModel
+        + SensorMap(SensorMapViewModel viewModel)
+        # OnAppearing()
+        # OnDisappearing()
+        ' XAML binds to SensorMapViewModel properties (IsLoading, ErrorMessage, SensorMarkers)
+        ' XAML uses Syncfusion.Maui.Maps controls
+    }
+
+    class AppShell <<(S,Orange) Shell>> extends Shell {
+        + AppShell() ' Registers Routes
+        ' Routing.RegisterRoute("SensorMap", typeof(SensorMap))
+    }
+}
+
+package CourseworkApp.ViewModels {
+    class EnvironmentalScientistViewModel <<(VM,LightGreen) ViewModel>> extends ObservableObject {
+        - readonly INavigationService _navigationService
+        + ObservableCollection<string> Categories
+        + string SelectedCategory
+        + ObservableCollection<Measurement> DisplayedData
+        + ObservableCollection<ChartPoint> ChartData
+        + EnvironmentalScientistViewModel(INavigationService navigationService)
+        + GoToMapViewAsync() <<RelayCommand>>
+        # OnSelectedCategoryChanged(string value)
+    }
+
+    class SensorMapViewModel <<(VM,LightGreen) ViewModel>> extends ObservableObject {
+        - readonly ISensorReadingService _sensorReadingService
+        - readonly ILoggingService _loggingService
+        - IDispatcherTimer _refreshTimer
+        + ObservableCollection<MapMarker> SensorMarkers
+        + bool IsLoading
+        + string ErrorMessage
+        + SensorMapViewModel(ISensorReadingService srService, ILoggingService logService)
+        + LoadDataAsync() <<RelayCommand>>
+        - UpdateMapMarkers(IEnumerable<SensorReadings> readings)
+        - InitializeTimer()
+        + StartUpdates()
+        + StopUpdates()
+    }
+
+    class Measurement <<(D,Yellow) Data>> {
+      + Date : string
+      + Value : double
+      + Detail : string
+    }
+
+    class ChartPoint <<(D,Yellow) Data>> {
+      + Label : string
+      + Value : double
+    }
+}
+
+package CourseworkApp.Services {
+    interface INavigationService <<(I,Orchid) Interface>> {
+        + GoToAsync(string route)
+    }
+    interface ISensorReadingService <<(I,Orchid) Interface>> {
+        + Task<IEnumerable<SensorReadings>> GetRecentReadingsWithLocationAsync(TimeSpan lookback)
+    }
+    interface ILoggingService <<(I,Orchid) Interface>> {
+        + Task LogInfoAsync(string message, object context)
+        + Task LogWarningAsync(string message, object context)
+        + Task LogErrorAsync(string message, Exception ex, object context)
+    }
+}
+
+package CourseworkApp.Database.Models {
+    class SensorReadings <<(M,LightCoral) Model>> {
+        + ReadingId : int
+        + Config : SensorConfigurations ' Navigation Property
+        ' ... other properties
+    }
+    class SensorConfigurations <<(M,LightCoral) Model>> {
+        + ConfigId : int
+        + ConfigData : ConfigDataType ' Owned Entity (JSON)
+        ' ... other properties
+    }
+    class ConfigDataType {
+        + LocationLatitude : double  
+        + LocationLongitude : double 
+        ' ... other config properties
+    }
+}
+
+package Microsoft.Maui.Controls {
+    abstract class ContentPage <<External>>
+    abstract class Shell <<External>>
+}
+
+package CommunityToolkit.Mvvm.ComponentModel {
+    abstract class ObservableObject <<External>>
+}
+
+package Syncfusion.Maui.Maps {
+    class MapMarker <<External>> {
+        + Latitude : double
+        + Longitude : double
+        + BindingContext : object
+    }
+    class SfMaps <<External>>
+    class MapTileLayer <<External>>
+}
+
+package Microsoft.Maui.Dispatching {
+    interface IDispatcherTimer <<External>> {
+        + Interval : TimeSpan
+        + {event} Tick : EventHandler<EventArgs>
+        + Start() : void
+        + Stop() : void
+    }
+}
+
+' --- Relationships ---
+
+' View -> ViewModel (Dependency Injection / Binding Context)
+SensorMap --> SensorMapViewModel : uses/binds to
+EnvironmentalScientistViewModel --> Measurement : contains >
+EnvironmentalScientistViewModel --> ChartPoint : contains >
+
+' ViewModel -> Service (Dependency Injection)
+EnvironmentalScientistViewModel ..> INavigationService : uses
+SensorMapViewModel ..> ISensorReadingService : uses
+SensorMapViewModel ..> ILoggingService : uses
+
+' ViewModel -> Model / External Data Structures
+SensorMapViewModel ..> SensorReadings : loads
+SensorMapViewModel *--> "ObservableCollection<MapMarker>" : owns/updates
+SensorMapViewModel ..> IDispatcherTimer : uses
+
+' View -> External Libraries
+SensorMap ..> SfMaps : uses
+SensorMap ..> MapTileLayer : uses
+SensorMap ..> MapMarker : template uses
+
+' Model Relationships (Simplified from DBContext)
+SensorReadings --> SensorConfigurations : has one > Config
+
+' Routing
+AppShell ..> SensorMap : routes to
+
+' Navigation Flow (Conceptual)
+EnvironmentalScientistViewModel -> INavigationService : initiates navigation >
+note on link
+  via GoToMapViewAsync() command,
+  typically triggered by a Button
+  in an EnvironmentalScientistView (not shown)
+end note
+
+INavigationService -> AppShell : resolves route >
+note on link
+  The implementation of INavigationService
+  (likely using Shell.Current.GoToAsync)
+  interacts with AppShell's routing.
+end note
+
+
+' Notes
+note right of EnvironmentalScientistViewModel
+  Acts as a higher-level VM for the scientist,
+  can navigate to more specific views like the map.
+end note
+
+note right of SensorMapViewModel
+  Handles the logic specifically for the Sensor Map View:
+  - Fetching data via ISensorReadingService
+  - Transforming data into MapMarkers
+  - Managing UI state (IsLoading, ErrorMessage)
+  - Handling auto-refresh via IDispatcherTimer
+end note
+
+note left of SensorMap
+  Displays the map using Syncfusion controls.
+  Data is bound from SensorMapViewModel.
+  Handles view lifecycle (OnAppearing/OnDisappearing)
+  to start/stop ViewModel updates.
+end note
+
+@enduml

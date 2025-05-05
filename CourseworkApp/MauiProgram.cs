@@ -33,20 +33,22 @@ public static class MauiProgram
 		builder.Services.AddDbContextFactory<TestDbContext>();
 
 
-		builder.Services.AddSingleton<MainPage>();
-		builder.Services.AddSingleton<MainPageViewModel>();
-		builder.Services.AddSingleton<AdminConfig>();
-		builder.Services.AddSingleton<AdminConfigViewModel>();
-		builder.Services.AddSingleton<ConfigForm>();
-		builder.Services.AddSingleton<ConfigFormViewModel>();
-		builder.Services.AddSingleton<AdminFirmware>();
-		builder.Services.AddSingleton<AdminFirmwareViewModel>();
-		builder.Services.AddSingleton<FirmwareFormViewModel>();
-		builder.Services.AddSingleton<FirmwareForm>();
-		builder.Services.AddSingleton<EnvironmentalScientist>();
-		builder.Services.AddSingleton<EnvironmentalScientistViewModel>();
-		builder.Services.AddSingleton<SensorMap>();
-		builder.Services.AddSingleton<SensorMapViewModel>();
+		builder.Services.AddTransient<MainPage>();
+		builder.Services.AddTransient<MainPageViewModel>();
+		builder.Services.AddTransient<AdminConfig>();
+		builder.Services.AddTransient<AdminConfigViewModel>();
+		builder.Services.AddTransient<ConfigForm>();
+		builder.Services.AddTransient<ConfigFormViewModel>();
+		builder.Services.AddTransient<AdminFirmware>();
+		builder.Services.AddTransient<AdminFirmwareViewModel>();
+		builder.Services.AddTransient<FirmwareFormViewModel>();
+		builder.Services.AddTransient<FirmwareForm>();
+		builder.Services.AddTransient<EnvironmentalScientist>();
+		builder.Services.AddTransient<EnvironmentalScientistViewModel>();
+		builder.Services.AddTransient<SensorMap>();
+		builder.Services.AddTransient<SensorMapViewModel>();
+
+
 		builder.Services.AddSingleton<ISensorConfigurationFactory, SensorConfigurationFactory>();
 		builder.Services.AddSingleton<INavigationService, NavigationService>();
 		builder.Services.AddSingleton<IValidationService, ValidationService>();
@@ -54,7 +56,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ILoggingService, LoggingService>();
 		builder.Services.AddSingleton<ISensorHistoryService, SensorHistoryService>();
 		builder.Services.AddSingleton<IFirmwareService, FirmwareService>();
-		builder.ConfigureSyncfusionCore();
+		builder.Services.AddSingleton<ISensorReadingService, SensorReadingService>();
 
 #if DEBUG
 

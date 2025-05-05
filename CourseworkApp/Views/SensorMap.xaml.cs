@@ -20,8 +20,13 @@ namespace CourseworkApp.Views
 		protected override void OnAppearing()
 		{
 			base.OnAppearing();
-			// Initial view set in XAML's ZoomPanBehavior
-			// Add the test marker using the correct layer type
+			_viewModel?.StartUpdates();
+		}
+
+		protected override void OnDisappearing()
+		{
+			base.OnDisappearing();
+			_viewModel?.StopUpdates();
 		}
 	}
 }

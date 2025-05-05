@@ -44,8 +44,8 @@ public class DatabaseSensorFixture
       {
         MonitorDurationSeconds = 120,
         MonitorFrequencySeconds = 10,
-        LocationLatitude = 40.7128,
-        LocationLongitude = -74.0060
+        LocationLatitude = 55.7128,
+        LocationLongitude = -2.5060
       },
       CreatedAt = DateTime.Now,
       IsActive = true
@@ -61,8 +61,8 @@ public class DatabaseSensorFixture
       {
         MonitorDurationSeconds = 180,
         MonitorFrequencySeconds = 15,
-        LocationLatitude = 34.0522,
-        LocationLongitude = -118.2437
+        LocationLatitude = 54.6079,
+        LocationLongitude = -5.9264
       },
       CreatedAt = DateTime.Now,
       IsActive = true

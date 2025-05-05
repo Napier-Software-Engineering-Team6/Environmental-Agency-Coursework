@@ -33,7 +33,7 @@ namespace CourseworkApp.Database.Data
     public DbSet<FirmwareConfigurations> FirmwareConfigurationsDB { get; set; }
     public DbSet<SensorConfigHistory> SensorConfigHistoryDB { get; set; }
 
-    public DbSet<SensorReadings> sensorReadingsDB { get; set; }
+    public DbSet<SensorReadings> SensorReadingsDB { get; set; }
     /// <summary>
     /// OnConfiguring method is overridden to configure the database connection string.
     /// It checks for the connection string in the environment variables and if not found, it looks for it in the appsettings.json file.

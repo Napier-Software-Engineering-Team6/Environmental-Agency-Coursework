@@ -6,10 +6,25 @@
              x:DataType="vm:SensorMapViewModel"
              x:Class="CourseworkApp.Views.SensorMap"
              Title="Sensor Map">
-    <Grid>
-        <map:SfMaps>
+
+    <Grid RowDefinitions="Auto, *">
+        <VerticalStackLayout Grid.Row="0"
+                             Padding="10">
+            <ActivityIndicator IsVisible="{Binding IsLoading}"
+                               IsRunning="{Binding IsLoading}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullOrEmptyConverter}}"
+                   HorizontalOptions="Center"
+                   Margin="0,5,0,0"/>
+        </VerticalStackLayout>
+
+        <map:SfMaps Grid.Row="1">
             <map:SfMaps.Layer>
-                <map:MapTileLayer UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png">
+                <map:MapTileLayer UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                  Markers="{Binding SensorMarkers}">
 
                     <map:MapTileLayer.Center>
                         <map:MapLatLng Latitude="55"
@@ -22,12 +37,16 @@
                                                 EnableZooming="True"/>
                     </map:MapTileLayer.ZoomPanBehavior>
 
-                    <map:MapTileLayer.Markers>
-                        <map:MapMarkerCollection>
-                            <map:MapMarker Latitude="56.07"
-                                           Longitude="-3.46"/>
-                        </map:MapMarkerCollection>
-                    </map:MapTileLayer.Markers>
+                    <map:MapTileLayer.MarkerTemplate>
+                        <DataTemplate>
+                            <Border Stroke="Black"
+                                    StrokeThickness="1"
+                                    HeightRequest="12"
+                                    WidthRequest="12"
+                                    StrokeShape="RoundRectangle 50"
+                                    BackgroundColor="Purple"></Border>
+                        </DataTemplate>
+                    </map:MapTileLayer.MarkerTemplate>
 
                 </map:MapTileLayer>
             </map:SfMaps.Layer>
