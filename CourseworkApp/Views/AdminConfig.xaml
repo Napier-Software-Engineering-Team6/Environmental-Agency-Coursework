@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:CourseworkApp.Views"
+             xmlns:viewmodels="clr-namespace:CourseworkApp.ViewModels"
+             xmlns:models="clr-namespace:CourseworkApp.Database.Models;assembly=CourseworkApp.Database"
+             x:Class="CourseworkApp.Views.AdminConfig"
+             Title="AdminConfig"
+             x:DataType="viewmodels:AdminConfigViewModel">
+       <VerticalStackLayout
+              Padding="20"
+              Spacing="20"
+              VerticalOptions="Center">
+              <Label
+                     Text="Sensor Configurations"
+                     FontSize="Large"
+                     HorizontalOptions="Center"/>
+              <Grid ColumnDefinitions="80, 150, 150, 120, 120, Auto, 150, 120, 80, Auto"
+                    ColumnSpacing="5"
+                    Padding="5, 0, 5, 0">
+                     <Label Grid.Column="0"
+                            Text="ID"
+                            FontAttributes="Bold"/>
+                     <Label Grid.Column="1"
+                            Text="Sensor Type"
+                            FontAttributes="Bold"/>
+                     <Label Grid.Column="2"
+                            Text="Config Name"
+                            FontAttributes="Bold"/>
+                     <Label Grid.Column="3"
+                            Text="Freq (s)"
+                            FontAttributes="Bold"/>
+                     <Label Grid.Column="4"
+                            Text="Dur (s)"
+                            FontAttributes="Bold"/>
+                     <Label Grid.Column="5"
+                            Text="Latitude"
+                            FontAttributes="Bold"/>
+                     <Label Grid.Column="6"
+                            Text="Longitude"
+                            FontAttributes="Bold"/>
+                     <Label Grid.Column="7"
+                            Text="Created At"
+                            FontAttributes="Bold"/>
+                     <Label Grid.Column="8"
+                            Text="Active"
+                            FontAttributes="Bold"/>
+                     <Label Grid.Column="9"
+                            Text="Edit"
+                            FontAttributes="Bold"/>
+              </Grid>
+
+              <CollectionView ItemsSource="{Binding Configurations}">
+
+                     <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SensorConfigurations">
+                                   <Grid ColumnDefinitions="80, 150, 150, 120, 120, Auto, 150, 120, 80, Auto"
+                                         ColumnSpacing="5"
+                                         Padding="5, 0, 5, 0">
+                                          <Label Grid.Column="0"
+                                                 Text="{Binding ConfigId}"/>
+                                          <Label Grid.Column="1"
+                                                 Text="{Binding SensorType}"/>
+                                          <Label Grid.Column="2"
+                                                 Text="{Binding ConfigName}"/>
+                                          <Label Grid.Column="3"
+                                                 Text="{Binding ConfigData.MonitorFrequencySeconds}"/>
+                                          <Label Grid.Column="4"
+                                                 Text="{Binding ConfigData.MonitorDurationSeconds}"/>
+                                          <Label Grid.Column="5"
+                                                 Text="{Binding ConfigData.LocationLatitude}"/>
+                                          <Label Grid.Column="6"
+                                                 Text="{Binding ConfigData.LocationLongitude}"/>
+                                          <Label Grid.Column="7"
+                                                 Text="{Binding CreatedAt, StringFormat='{0:yyyy-MM-dd HH:mm}'}"/>
+                                          <Label Grid.Column="8"
+                                                 Text="{Binding IsActive}"/>
+                                          <Button Grid.Column="9"
+                                                  Text="Edit"
+                                                  Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:AdminConfigViewModel}}, Path=EditConfigurationCommand}"
+                                                  CommandParameter="{Binding .}"/>
+                                   </Grid>
+                            </DataTemplate>
+                     </CollectionView.ItemTemplate>
+              </CollectionView>
+       </VerticalStackLayout>
+</ContentPage>

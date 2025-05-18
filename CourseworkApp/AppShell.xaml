@@ -6,7 +6,6 @@
     xmlns:views="clr-namespace:CourseworkApp.Views"
     Shell.FlyoutBehavior="Disabled">
 
-
     <TabBar>
         <Tab Title="Home"
              Icon="home.png">
@@ -15,13 +14,24 @@
                 ContentTemplate="{DataTemplate views:MainPage}"
                 Route="MainPage"/>
         </Tab>
+
         <Tab Title="Admin"
-             Icon="admin.png">
+             Icon="admin.png"
+             x:Name="AdminTab">
             <ShellContent
                 Title="Admin"
                 ContentTemplate="{DataTemplate views:Administrator}"
                 Route="Administrator"/>
+            <ShellContent
+                Title="Configurations"
+                ContentTemplate="{DataTemplate views:AdminConfig}"
+                Route="AdminConfig"/>
+            <ShellContent
+                Title="Firmware"
+                ContentTemplate="{DataTemplate views:AdminFirmware}"
+                Route="AdminFirmware"/>
         </Tab>
+
         <Tab Title="Operations"
              Icon="operations.png">
             <ShellContent
@@ -29,6 +39,7 @@
                 ContentTemplate="{DataTemplate views:OperationsManager}"
                 Route="OperationsManager"/>
         </Tab>
+
         <Tab Title="Environmental Scientist"
              Icon="environmental_scientist.png">
             <ShellContent
@@ -36,7 +47,25 @@
                 ContentTemplate="{DataTemplate views:EnvironmentalScientist}"
                 Route="EnvironmentalScientist"/>
         </Tab>
-    </TabBar>
-</Shell>
 
-    
+        <Tab Title="Sensor Page"
+             Icon="environmental_scientist.png">
+            <ShellContent 
+                Title="Sensors"
+                ContentTemplate="{DataTemplate views:SensorPage}" 
+                Route="SensorPage"/>
+        </Tab>
+    </TabBar>
+
+    <!-- Standalone routes for login/role-based navigation -->
+    <ShellContent
+        Route="LoginPage"
+        ContentTemplate="{DataTemplate views:LoginPage}" />
+    <ShellContent
+        Route="AdminPage"
+        ContentTemplate="{DataTemplate views:Administrator}" />
+    <ShellContent
+        Route="HomePage"
+        ContentTemplate="{DataTemplate views:MainPage}" />
+
+</Shell>

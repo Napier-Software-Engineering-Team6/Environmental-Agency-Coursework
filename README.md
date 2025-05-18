@@ -13,6 +13,6 @@ CREATE LOGIN notesapp WITH PASSWORD='N0tesApp$';
 CREATE user notesapp for login notesapp;
 grant create any database to notesapp;
 
-on testdb
-CREATE user notesapp for login notesapp testdb
-GRANT control on DATABASE::testdb to notesapp;
+on CourseDb
+CREATE user notesapp for login notesapp CourseDb
+GRANT control on DATABASE::CourseDb to notesapp;
