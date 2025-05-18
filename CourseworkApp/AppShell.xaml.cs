@@ -1,4 +1,4 @@
-﻿using CourseworkApp.Services;
+using CourseworkApp.Services;
 using CourseworkApp.Views;
 
 namespace CourseworkApp;
@@ -18,6 +18,8 @@ public partial class AppShell : Shell
         // Register page routes used in admin tab
         Routing.RegisterRoute("AdminConfig", typeof(AdminConfig));
         Routing.RegisterRoute("AdminConfig/ConfigForm", typeof(ConfigForm));
+        Routing.RegisterRoute("AdminFirmware", typeof(AdminFirmware));
+        Routing.RegisterRoute("AdminFirmware/FirmwareForm", typeof(FirmwareForm));
 
         // Hide the Admin tab if the logged-in user is not an Admin
         if (SessionService.LoggedInUser?.Role != Models.UserRole.Admin)

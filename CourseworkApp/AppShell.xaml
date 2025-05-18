@@ -14,6 +14,7 @@
                 ContentTemplate="{DataTemplate views:MainPage}"
                 Route="MainPage"/>
         </Tab>
+
         <Tab Title="Admin"
              Icon="admin.png"
              x:Name="AdminTab">
@@ -25,11 +26,12 @@
                 Title="Configurations"
                 ContentTemplate="{DataTemplate views:AdminConfig}"
                 Route="AdminConfig"/>
-            <!-- <ShellContent
+            <ShellContent
                 Title="Firmware"
                 ContentTemplate="{DataTemplate views:AdminFirmware}"
-                Route="AdminFirmware"/> -->
+                Route="AdminFirmware"/>
         </Tab>
+
         <Tab Title="Operations"
              Icon="operations.png">
             <ShellContent
@@ -37,12 +39,21 @@
                 ContentTemplate="{DataTemplate views:OperationsManager}"
                 Route="OperationsManager"/>
         </Tab>
+
         <Tab Title="Environmental Scientist"
              Icon="environmental_scientist.png">
             <ShellContent
                 Title="Environmental Scientist"
                 ContentTemplate="{DataTemplate views:EnvironmentalScientist}"
                 Route="EnvironmentalScientist"/>
+        </Tab>
+
+        <Tab Title="Sensor Page"
+             Icon="environmental_scientist.png">
+            <ShellContent 
+                Title="Sensors"
+                ContentTemplate="{DataTemplate views:SensorPage}" 
+                Route="SensorPage"/>
         </Tab>
     </TabBar>
 
