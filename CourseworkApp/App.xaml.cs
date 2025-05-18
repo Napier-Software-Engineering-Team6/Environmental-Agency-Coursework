@@ -1,11 +1,17 @@
-﻿namespace CourseworkApp;
+﻿using CourseworkApp.Views; // Required if you navigate directly to LoginPage
+using Microsoft.Maui.Controls;
 
-public partial class App : Application
+namespace CourseworkApp
 {
-	public App()
-	{
-		InitializeComponent();
+    public partial class App : Application
+    {
+        public App()
+        {
+            InitializeComponent();
+            MainPage = new AppShell();
 
-		MainPage = new AppShell();
-	}
+            // Navigate to login screen on startup (clears nav stack)
+            Shell.Current.GoToAsync("//LoginPage");
+        }
+    }
 }

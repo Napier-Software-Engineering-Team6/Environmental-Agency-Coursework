@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using CourseworkApp.Database.Data;
@@ -8,8 +9,6 @@ using CourseworkApp.ViewModels;
 using CourseworkApp.Views;
 using CourseworkApp.Services.Factory;
 using Syncfusion.Maui.Core.Hosting;
-using Microsoft.Extensions.Logging;
-
 
 namespace CourseworkApp;
 
@@ -27,9 +26,9 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        // Registering EF Core contexts
         builder.Services.AddDbContextFactory<TestDbContext>();
 
+        // Load Configuration
         var config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
@@ -41,13 +40,6 @@ public static class MauiProgram
 
         builder.Services.AddDbContext<CourseDbContext>(options =>
             options.UseSqlServer(connectionString));
-
-        // Register Syncfusion Core
-        builder.ConfigureSyncfusionCore();
-
-#if DEBUG
-        builder.Logging.AddDebug();
-#endif
 
         // View + ViewModel registration
         builder.Services.AddSingleton<MainPage>();
@@ -74,12 +66,19 @@ public static class MauiProgram
         builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
         builder.Services.AddSingleton<ILoggingService, LoggingService>();
         builder.Services.AddSingleton<ISensorHistoryService, SensorHistoryService>();
+        builder.Services.AddSingleton<ILoginService, LoginService>();
         builder.Services.AddSingleton<IFirmwareService, FirmwareService>();
         builder.Services.AddTransient<ISensorRepository, SensorRepository>();
         builder.Services.AddSingleton<IAlertService, AlertService>();
         builder.Services.AddTransient<SensorService>();
         builder.Services.AddTransient<SensorViewModel>();
 
+        // Register Syncfusion Core
+        builder.ConfigureSyncfusionCore();
+
+#if DEBUG
+        builder.Logging.AddDebug();
+#endif
 
         return builder.Build();
     }

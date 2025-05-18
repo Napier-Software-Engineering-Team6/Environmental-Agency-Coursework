@@ -1,0 +1,60 @@
+@startuml
+title Authentication Feature - Class Diagram
+
+' Styles
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam classFontSize 12
+
+' Models
+class UserModel {
+    +Username : string
+    +Password : string
+    +Role : UserRole
+}
+
+enum UserRole {
+    Admin
+    User
+}
+
+' Services
+interface ILoginService {
+    +Authenticate(username: string, password: string) : UserModel?
+}
+
+class LoginService {
+    -_users : List<UserModel>
+    +Authenticate(username: string, password: string) : UserModel?
+}
+
+class SessionService {
+    +LoggedInUser : UserModel
+}
+
+' ViewModel
+class LoginViewModel {
+    -_loginService : ILoginService
+    -Username : string?
+    -Password : string?
+    -ErrorMessage : string?
+    -IsErrorVisible : bool
+    +Login() : Task
+}
+
+' Shell
+class AppShell {
+    +AppShell()
+    -Logout() : void
+}
+
+' Relationships
+LoginService --> ILoginService : implements
+LoginViewModel --> ILoginService : depends on
+LoginViewModel --> SessionService : uses
+AppShell --> SessionService : checks
+AppShell --> AppShell : resets
+SessionService --> UserModel : holds
+LoginService --> UserModel : uses
+
+@enduml
